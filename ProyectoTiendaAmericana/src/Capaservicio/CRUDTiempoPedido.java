@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import capaControladorServicios.ParametrosCtrl;
-import capaModeloWeb.Usuario;
+import capaModeloWeb.UsuarioAnt;
 
 /**
  * Servlet implementation class CRUDFormaPago
@@ -39,7 +39,7 @@ public class CRUDTiempoPedido extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Origin", "*");		
 		HttpSession sesion = request.getSession();
 		response.addHeader("Access-Control-Allow-Origin", "*");
-		Usuario usuario = (Usuario) sesion.getAttribute("usuario");
+		UsuarioAnt usuario = (UsuarioAnt) sesion.getAttribute("usuario");
 		String user = "" ;
 		//Al no existir el usuario logueado es posible que produza una excepcion
 		try

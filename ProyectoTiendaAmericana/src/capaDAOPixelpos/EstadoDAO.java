@@ -12,7 +12,7 @@ import capaModelo.EstadoPedido;
 import capaModelo.Impuesto;
 import capaModelo.Producto;
 import capaModeloWeb.Tienda;
-import capaModeloWeb.Usuario;
+import capaModeloWeb.UsuarioAnt;
 
 import org.apache.log4j.Logger;
 import com.mysql.jdbc.ResultSetMetaData;

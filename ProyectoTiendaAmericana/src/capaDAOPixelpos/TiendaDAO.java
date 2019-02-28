@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import capaConexion.ConexionBaseDatos;
 import capaModelo.FechaSistema;
 import capaModeloWeb.Tienda;
-import capaModeloWeb.Usuario;
+import capaModeloWeb.UsuarioAnt;
 
 import org.apache.log4j.Logger;
 /**

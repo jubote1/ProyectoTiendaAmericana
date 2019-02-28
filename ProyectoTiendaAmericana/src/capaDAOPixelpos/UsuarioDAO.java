@@ -1,6 +1,7 @@
 package capaDAOPixelpos;
 import capaConexion.ConexionBaseDatos;
-import capaModeloWeb.Usuario;
+import capaModelo.Usuario;
+import capaModeloWeb.UsuarioAnt;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -19,7 +20,7 @@ public class UsuarioDAO {
 	 * autenticación del usuario.
 	 * @return Se retorna un valor booleano que indica si el proceso de autenticación es satifactorio o no.
 	 */
-	public static boolean validarUsuario(Usuario usuario)
+	public static boolean validarUsuario(UsuarioAnt usuario)
 	{
 		Logger logger = Logger.getLogger("log_file");
 		ConexionBaseDatos con = new ConexionBaseDatos();
@@ -63,7 +64,7 @@ public class UsuarioDAO {
 	 * @return Se retorna un valor booleano con base en el cual se realiza la validación del usuario en base de datos
 	 * 
 	 */
-	public static String validarAutenticacion(Usuario usuario)
+	public static String validarAutenticacion(UsuarioAnt usuario)
 	{
 		ConexionBaseDatos con = new ConexionBaseDatos();
 		Connection con1 = con.obtenerConexionBDLocal();
@@ -95,6 +96,64 @@ public class UsuarioDAO {
 			}
 		}
 		return(resultado);
+	}
+	
+	public static Usuario validarClaveRapida(String claveRapida)
+	{
+		Logger logger = Logger.getLogger("log_file");
+		ConexionBaseDatos con = new ConexionBaseDatos();
+		Connection con1 = con.obtenerConexionBDLocal();
+		Usuario usuario = new Usuario(0,"","","",0,"",false);
+		try
+		{
+			Statement stm = con1.createStatement();
+			String consulta = "select * from usuario where claverapida = '" + claveRapida + "'";
+			logger.info(consulta);
+			ResultSet rs = stm.executeQuery(consulta);
+			int idUsuario;
+			String nombreUsuario;
+			String contrasena = "";
+			String nombreLargo;
+			int idTipoEmpleado;
+			String tipoInicio;
+			boolean administrador;
+			int estadoDomiciliario;
+			while(rs.next()){
+				
+				try{
+					idUsuario = rs.getInt("id");
+					nombreUsuario = rs.getString("nombre_largo");
+					nombreLargo = rs.getString("nombre_largo");
+					idTipoEmpleado = rs.getInt("idtipoempleado");
+					estadoDomiciliario = rs.getInt("estadoDomiciliario");
+					tipoInicio = rs.getString("tipoinicio");
+					if(rs.getString("administrador").equals(new String("S")))
+					{
+						administrador = true;
+					}else
+					{
+						administrador = false;
+					}
+					usuario = new Usuario(idUsuario,nombreLargo,contrasena, nombreLargo, idTipoEmpleado, tipoInicio,administrador);
+					usuario.setEstadoDomiciliario(estadoDomiciliario);
+					break;
+				}catch(Exception e){
+					
+					
+				}
+				rs.close();
+				stm.close();
+				con1.close();
+			}
+		}catch (Exception e){
+			try
+			{
+				con1.close();
+			}catch(Exception e1)
+			{
+			}
+		}
+		return(usuario);
 	}
 	
 }

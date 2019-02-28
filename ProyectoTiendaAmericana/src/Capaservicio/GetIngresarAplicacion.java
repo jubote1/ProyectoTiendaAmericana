@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import capaControladorServicios.AutenticacionCtrl;
-import capaModeloWeb.Usuario;
+import capaModeloWeb.UsuarioAnt;
 /**
  * Servlet implementation class IngresarAplicacion
  * Servicio utilizado para el logueo de la aplicación, recibiendo usuario y password, validando el resultado de la operacion
@@ -46,7 +46,7 @@ public class GetIngresarAplicacion extends HttpServlet {
         boolean resultado = aut.autenticarUsuario(user, pass);
         PrintWriter out = response.getWriter();
         if (resultado){
-        		Usuario usuario = new Usuario(user);
+        		UsuarioAnt usuario = new UsuarioAnt(user);
         		sesion.setAttribute("usuario", usuario);
         		logger.info("El logueo del usuario " + user + " ha sido satisfactorio");
         		out.write("OK");

@@ -19,14 +19,14 @@ import capaModeloWeb.UsuarioAnt;
  * Servicio que es invocado siempre que es cargada una página con el fin de validar si quien accede esta logueado en el sistema
  * en caso negativo se redirecciona a la URL de logueo a la aplicació.
  */
-@WebServlet("/ValidarUsuarioAplicacion")
-public class ValidarUsuarioAplicacion extends HttpServlet {
+@WebServlet("/ValidarIngreso")
+public class ValidarIngreso extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ValidarUsuarioAplicacion() {
+    public ValidarIngreso() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -41,38 +41,23 @@ public class ValidarUsuarioAplicacion extends HttpServlet {
 		// TODO Auto-generated method stub
 				response.addHeader("Access-Control-Allow-Origin", "*");
 				Logger logger = Logger.getLogger("log_file");
-				HttpSession miSesion = (HttpSession) request.getSession();
-				UsuarioAnt usuario = (UsuarioAnt) miSesion.getAttribute("usuario");
-				String resultado ="" ;
+				String claveRapida = request.getParameter("claverapida");
+				String usuario = "";
 				//Al no existir el usuario logueado es posible que produza una excepcion
 				try
 				{
-					String user = usuario.getNombreUsuario();
-					logger.info("Validando validez de autenticacion de usuario " + user);
+					logger.info("Validando validez de autenticacion de usuario ");
 					//Debemos de validar la existencia del usuario
 					AutenticacionCtrl aut = new AutenticacionCtrl();
-					resultado = aut.validarAutenticacion(user);
-					logger.info("resultado de validación de autenticación de usuario " + user + " " + resultado);
+					usuario = aut.validarClaveRapida(claveRapida);
+					logger.info("resultado de validación de autenticación de usuario " + usuario);
 				}catch(Exception e)
 				{
 					logger.error(e.toString());
 					
 				}
 		        PrintWriter out = response.getWriter();
-		        out.write(resultado);
-		        //comentamos lo siguiente porque ya la respuesta viene de la capa de controlador
-		        //if (resultado.equals(new  String ("N")) ){
-		        //		out.write("OK");
-		        //		//response.sendRedirect("http://localhost:8080/ProyectoPizzaAmericana/Pedidos.html");
-		        //} 
-		        //else if(resultado.equals(new  String ("S"))){
-		        //	   	out.write("OKA");
-		        	
-		        //}else
-		        //{
-		        //	out.write("NOK");
-		        //}
-		        	
+		        out.write(usuario);
 	}
 
 	/**

@@ -26,6 +26,7 @@ import capaModelo.DetallePedido;
 import capaModelo.FechaSistema;
 import capaModelo.Municipio;
 import capaModelo.NomenclaturaDireccion;
+import capaModelo.Parametro;
 import capaModelo.TiempoPedido;
 import capaModeloWeb.Cliente;
 import capaModeloWeb.DetallePedidoPixel;
@@ -689,10 +690,170 @@ public class PedidoCtrl {
 				}
 				
 			}
-			TiempoPedido tiemPedido = new TiempoPedido(idPedidoActual, respuesta);
+			TiempoPedido tiemPedido =
+				new TiempoPedido(idPedidoActual, respuesta);
 			tiemposPedidos.add(tiemPedido);
 		}
 		return(tiemposPedidos);
 	}
+	
+	//Realizamos desarrollo en capa controlador de lo que atenderá la necesidad de consulta de pedidos 
+	public String consultarPedidosDomiciliario(String idUsuario, int tipoConsulta)
+	{
+		ArrayList pedidos = new ArrayList();
+		capaControlador.PedidoCtrl pedidoCtrlTienda = new capaControlador.PedidoCtrl(false);
+		if(tipoConsulta == 1)
+		{
+			pedidos = pedidoCtrlTienda.obtenerPedidosVentanaComandaDomEnRutaTablet(Integer.parseInt(idUsuario));
+		}else if(tipoConsulta == 2)
+		{
+			pedidos = pedidoCtrlTienda.obtenerPedidosVentanaComandaDomTablet(Integer.parseInt(idUsuario));
+		}
+		//Realizamos recorrido del ArrayList para generar el JSON correspondiente
+		JSONArray listJSON = new JSONArray();
+		JSONObject cadaPedidoJSON = new JSONObject();
+		for(int i = 0; i < pedidos.size(); i++)
+		{
+			
+			cadaPedidoJSON = new JSONObject();
+			String[] fila =(String[]) pedidos.get(i);
+			cadaPedidoJSON.put("idpedido", fila[1]);
+			cadaPedidoJSON.put("nombres", fila[3]);
+			cadaPedidoJSON.put("estadopedido", fila[5]);
+			cadaPedidoJSON.put("direccion", fila[6]);
+			cadaPedidoJSON.put("domiciliario", fila[9]);
+			cadaPedidoJSON.put("tp", fila[10]);
+			cadaPedidoJSON.put("tiempo", fila[11]);
+			listJSON.add(cadaPedidoJSON);
+		}
+		return(listJSON.toJSONString());
+	}
+	
+	
+	//Método que se encargará de dar llegada a los domiciliarios desde el sistema TABLET
+	public String darLlegadaDomicilios(String idUsuario, String usuario)
+	{
+		//Se traen el listado de pedidos 
+		ArrayList pedidos = new ArrayList();
+		capaControlador.PedidoCtrl pedidoCtrlTienda = new capaControlador.PedidoCtrl(false);
+		pedidos = pedidoCtrlTienda.obtenerPedidosVentanaComandaDomEnRuta(Integer.parseInt(idUsuario));
+		//Realizamos un recorrido de cada uno de los pedidos para darle la llegada al domiciliario
+		long estEnRutaDom;
+		//variable que indica el estado cuando un domicilio es entregado
+		long estEntregaDom;
+		
+		
+		//Inicialiazamos los valores de los estados pedidos
+		ParametrosCtrl parCtrl = new ParametrosCtrl(false);
+		long valNum = 0;
+		Parametro parametro = parCtrl.obtenerParametro("ENRUTADOMICILIO");
+		try
+		{
+			valNum = (long) parametro.getValorNumerico();
+		}catch(Exception e)
+		{
+			System.out.println("SE TUVO ERROR TOMANDO LA CONSTANTE DE PEDIDOS EN RUTA");
+			valNum = 0;
+		}
+		estEnRutaDom = valNum;
+		parametro = parCtrl.obtenerParametro("ENTREGADODOMICILIO");
+		try
+		{
+			valNum = (long) parametro.getValorNumerico();
+		}catch(Exception e)
+		{
+			System.out.println("SE TUVO ERROR TOMANDO LA CONSTANTE DE DOMICILIOS ENTREGADOS");
+			valNum = 0;
+		}
+		estEntregaDom = valNum;
+		
+		
+		//Realizamos recorrido del ArrayList con el fin dar llegada a los domicilios
+		for(int i = 0; i < pedidos.size(); i++)
+		{
+			String[] fila =(String[]) pedidos.get(i);
+			int idPedido = Integer.parseInt(fila[1]);
+			pedidoCtrlTienda.ActualizarEstadoPedido((int)idPedido, (int) estEnRutaDom , (int) estEntregaDom,usuario,true, Integer.parseInt(idUsuario), false);
+		}
+		//Luego de avanzar todos los pedidos damos la entrada al domiciliario
+		capaControlador.EmpleadoCtrl empCtrl = new capaControlador.EmpleadoCtrl(false);
+		empCtrl.entradaDomiciliario(Integer.parseInt(idUsuario));
+		JSONObject resultado = new JSONObject();
+		resultado.put("resultado", "exitoso");
+		return(resultado.toString());
+	}
+	
+	
+	//Método que se encargará de dar llegada a los domiciliarios desde el sistema TABLET
+		public String darSalidaDomicilios(String idUsuario, String usuario, String JSONidPedido)
+		{
+			//Creamos el JSONArray con el JSON que se recibe como parámetro
+			JSONArray JSONPedidos = new JSONArray();
+			try
+			{
+				JSONParser parser = new JSONParser();
+				Object objParser = parser.parse(JSONidPedido);
+				JSONPedidos = (JSONArray) objParser;
+			}catch(Exception e)
+			{
+				System.out.println("Error parseando el JSON recibido por aplicación Tablet " + e.toString());
+			}
+			//Se traen el listado de pedidos 
+			ArrayList pedidos = new ArrayList();
+			capaControlador.PedidoCtrl pedidoCtrlTienda = new capaControlador.PedidoCtrl(false);
+			//Realizamos un recorrido de cada uno de los pedidos para darle la llegada al domiciliario
+			long estEnRutaDom;
+			//variable que indica el estado cuando un domicilio es entregado
+			long estEmpDom;
+			
+			ParametrosCtrl parCtrl = new ParametrosCtrl(false);
+			Parametro parametro = parCtrl.obtenerParametro("EMPACADODOMICILIO");
+			long valNum = 0;
+			try
+			{
+				valNum = (long) parametro.getValorNumerico();
+			}catch(Exception e)
+			{
+				System.out.println("SE TUVO ERROR TOMANDO LA CONSTANTE DE PEDIDOS EMPACADOS");
+				valNum = 0;
+			}
+			estEmpDom = valNum;
+			parametro = parCtrl.obtenerParametro("ENRUTADOMICILIO");
+			try
+			{
+				valNum = (long) parametro.getValorNumerico();
+			}catch(Exception e)
+			{
+				System.out.println("SE TUVO ERROR TOMANDO LA CONSTANTE DE PEDIDOS EN RUTA");
+				valNum = 0;
+			}
+			estEnRutaDom = valNum;
+					
+			//recorremos el arreglo para dar salida a todos los pedidos
+			for(int i = 0; i < JSONPedidos.size(); i++)
+			{
+				JSONObject pedido =(JSONObject) JSONPedidos.get(i);
+				int idPedido = Integer.parseInt((String)pedido.get("idpedido"));
+				//Realizamos la salida del domicilio en específico
+				pedidoCtrlTienda.ActualizarEstadoPedido((int)idPedido, (int) estEmpDom , (int) estEnRutaDom,usuario,true, Integer.parseInt(idUsuario),true);
+			}
+			//Luego de avanzar todos los pedidos damos la entrada al domiciliario
+			capaControlador.EmpleadoCtrl empCtrl = new capaControlador.EmpleadoCtrl(false);
+			empCtrl.salidaDomiciliario(Integer.parseInt(idUsuario));
+			
+			JSONObject resultado = new JSONObject();
+			resultado.put("resultado", "exitoso");
+			return(resultado.toString());
+		}
+		
+		public String cambiarEstadoDomiciliario(String idUsuario)
+		{
+			ArrayList pedidos = new ArrayList();
+			capaControlador.EmpleadoCtrl empCtrl = new capaControlador.EmpleadoCtrl(false);
+			empCtrl.entradaDomiciliario(Integer.parseInt(idUsuario));
+			JSONObject resultado = new JSONObject();
+			resultado.put("resultado", "exitoso");
+			return(resultado.toString());
+		}
 
 }

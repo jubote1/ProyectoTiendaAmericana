@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import capaControladorServicios.ClienteCtrl;
-import capaModeloWeb.Usuario;
+import capaModeloWeb.UsuarioAnt;
 
 /**
  * Servlet implementation class ActualizarCliente

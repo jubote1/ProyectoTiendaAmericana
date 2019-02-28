@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import capaControladorServicios.AutenticacionCtrl;
+import capaControladorServicios.PedidoCtrl;
 import capaModeloWeb.UsuarioAnt;
 
 /**
@@ -19,14 +20,14 @@ import capaModeloWeb.UsuarioAnt;
  * Servicio que es invocado siempre que es cargada una página con el fin de validar si quien accede esta logueado en el sistema
  * en caso negativo se redirecciona a la URL de logueo a la aplicació.
  */
-@WebServlet("/ValidarUsuarioAplicacion")
-public class ValidarUsuarioAplicacion extends HttpServlet {
+@WebServlet("/ConsultarPedidosDomiciliario")
+public class ConsultarPedidosDomiciliario extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ValidarUsuarioAplicacion() {
+    public ConsultarPedidosDomiciliario() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -41,38 +42,42 @@ public class ValidarUsuarioAplicacion extends HttpServlet {
 		// TODO Auto-generated method stub
 				response.addHeader("Access-Control-Allow-Origin", "*");
 				Logger logger = Logger.getLogger("log_file");
-				HttpSession miSesion = (HttpSession) request.getSession();
-				UsuarioAnt usuario = (UsuarioAnt) miSesion.getAttribute("usuario");
-				String resultado ="" ;
+				String idUsuario = "";
+				try
+				{
+					idUsuario = request.getParameter("idusuario");
+				}catch(Exception e)
+				{
+					System.out.println("Error casteando el usuario");
+					idUsuario = "1";
+				}
+				System.out.println("USUARIO " + idUsuario);
+				int tipoConsulta = 0;
+				try
+				{
+					tipoConsulta = Integer.parseInt(request.getParameter("tipoconsulta"));
+				}catch(Exception e)
+				{
+					System.out.println("Error casteando tipo consulta");
+					tipoConsulta = 1;
+				}
+				System.out.println("TIPO CONSULTA " + tipoConsulta);
+				String respuesta = "";
+				//Tipo consulta busca diferenciar el tipo de consulta 1 es para domiciliario disponible y 2 para domiciliario en ruta
 				//Al no existir el usuario logueado es posible que produza una excepcion
 				try
 				{
-					String user = usuario.getNombreUsuario();
-					logger.info("Validando validez de autenticacion de usuario " + user);
+					logger.info("En proceso de extraer pedidos para el domiciliario  " + idUsuario);
 					//Debemos de validar la existencia del usuario
-					AutenticacionCtrl aut = new AutenticacionCtrl();
-					resultado = aut.validarAutenticacion(user);
-					logger.info("resultado de validación de autenticación de usuario " + user + " " + resultado);
+					PedidoCtrl pedCtrl = new PedidoCtrl();
+					respuesta = pedCtrl.consultarPedidosDomiciliario(idUsuario, tipoConsulta);
 				}catch(Exception e)
 				{
 					logger.error(e.toString());
 					
 				}
 		        PrintWriter out = response.getWriter();
-		        out.write(resultado);
-		        //comentamos lo siguiente porque ya la respuesta viene de la capa de controlador
-		        //if (resultado.equals(new  String ("N")) ){
-		        //		out.write("OK");
-		        //		//response.sendRedirect("http://localhost:8080/ProyectoPizzaAmericana/Pedidos.html");
-		        //} 
-		        //else if(resultado.equals(new  String ("S"))){
-		        //	   	out.write("OKA");
-		        	
-		        //}else
-		        //{
-		        //	out.write("NOK");
-		        //}
-		        	
+		        out.write(respuesta);
 	}
 
 	/**

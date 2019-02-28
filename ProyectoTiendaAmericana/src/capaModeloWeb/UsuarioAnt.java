@@ -5,7 +5,7 @@ package capaModeloWeb;
  * @author JuanDavid
  *
  */
-public class Usuario {
+public class UsuarioAnt {
 	
 	private String nombreUsuario;
 	private String contrasena;
@@ -28,13 +28,13 @@ public class Usuario {
 	public void setNombreLargo(String nombreLargo) {
 		this.nombreLargo = nombreLargo;
 	}
-	public Usuario(String nombreUsuario, String contrasena, String nombreLargo) {
+	public UsuarioAnt(String nombreUsuario, String contrasena, String nombreLargo) {
 		super();
 		this.nombreUsuario = nombreUsuario;
 		this.contrasena = contrasena;
 		this.nombreLargo = nombreLargo;
 	}
-	public Usuario(String nombreUsuario) {
+	public UsuarioAnt(String nombreUsuario) {
 		super();
 		this.nombreUsuario = nombreUsuario;
 	}

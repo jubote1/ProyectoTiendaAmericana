@@ -5,7 +5,8 @@ import org.json.simple.JSONObject;
 
 import capaControladorServicios.AutenticacionCtrl;
 import capaDAOPixelpos.UsuarioDAO;
-import capaModeloWeb.Usuario;
+import capaModelo.Usuario;
+import capaModeloWeb.UsuarioAnt;
 
 /**
  * Clase AutenticacionCtrl tiene como objetivo hacer las veces de Controlador para la autenticación de usuarios
@@ -34,9 +35,24 @@ public class AutenticacionCtrl {
 	 * en al aplicación
 	 */
 	public boolean autenticarUsuario(String usuario, String contrasena){
-		Usuario usu = new Usuario(usuario, contrasena, "");
+		UsuarioAnt usu = new UsuarioAnt(usuario, contrasena, "");
 		boolean resultado = UsuarioDAO.validarUsuario(usu);
 		return(resultado);
+	}
+	
+	
+	public String validarClaveRapida(String claveRapida)
+	{
+		JSONObject respuesta = new JSONObject();
+		Usuario usuario = UsuarioDAO.validarClaveRapida(claveRapida);
+		respuesta.put("idusuario", usuario.getIdUsuario());
+		respuesta.put("nombreusuario", usuario.getNombreUsuario());
+		respuesta.put("nombrelargo", usuario.getNombreLargo());
+		respuesta.put("idtipoempleado", usuario.getIdTipoEmpleado());
+		respuesta.put("tipoinicio", usuario.getTipoInicio());
+		respuesta.put("administrador", usuario.isAdministrador());
+		respuesta.put("estadodomiciliario", usuario.getEstadoDomiciliario());
+		return(respuesta.toJSONString());
 	}
 	
 	/**
@@ -49,7 +65,7 @@ public class AutenticacionCtrl {
 	{
 		JSONArray listJSON = new JSONArray();
 		JSONObject Respuesta = new JSONObject();
-		Usuario usu = new Usuario(usuario);
+		UsuarioAnt usu = new UsuarioAnt(usuario);
 		String resultado = UsuarioDAO.validarAutenticacion(usu);
 		if (resultado.equals(new  String ("N")) ){
 			Respuesta.put("respuesta", "OK");
