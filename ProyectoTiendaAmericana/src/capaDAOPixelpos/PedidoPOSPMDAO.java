@@ -229,5 +229,65 @@ public class PedidoPOSPMDAO {
 		return(estadoPedido);
 		
 	}
+	
+	public static boolean validarPedidoContactExiste(int idPedidoContact)
+	{
+		Logger logger = Logger.getLogger("log_file");
+		ConexionBaseDatos con = new ConexionBaseDatos();
+		Connection con1 = con.obtenerConexionBDLocal();
+		boolean respuesta = false;
+		//En este punto y de manera temporal vamos a quemar el idEstado del producto empacado para domicilios
+		try
+		{
+			Statement stm = con1.createStatement();
+			String consulta = "select * from pedido_contact_center where idpedidocontact = "+ idPedidoContact;
+			ResultSet rs = stm.executeQuery(consulta);
+			while(rs.next()){
+				respuesta = true;
+				break;
+			}
+			rs.close();
+			stm.close();
+			con1.close();
+		}catch (Exception e){
+			logger.info(e.toString());
+			try
+			{
+				con1.close();
+			}catch(Exception e1)
+			{
+			}
+		}
+		return(respuesta);
+		
+	}
+	
+	public static boolean insertarPedidoContactExiste(int idPedidoContact, int idPedidoTienda)
+	{
+		Logger logger = Logger.getLogger("log_file");
+		ConexionBaseDatos con = new ConexionBaseDatos();
+		Connection con1 = con.obtenerConexionBDLocal();
+		boolean respuesta = false;
+		//En este punto y de manera temporal vamos a quemar el idEstado del producto empacado para domicilios
+		try
+		{
+			Statement stm = con1.createStatement();
+			String insertar = "insert into pedido_contact_center (idpedidocontact, idpedidotienda) values ("+ idPedidoContact + "," + idPedidoTienda + ")";
+			stm.executeUpdate(insertar);
+			stm.close();
+			con1.close();
+		}catch (Exception e){
+			logger.info(e.toString());
+			try
+			{
+				con1.close();
+			}catch(Exception e1)
+			{
+			}
+		}
+		return(respuesta);
+		
+	}
+	
 
 }

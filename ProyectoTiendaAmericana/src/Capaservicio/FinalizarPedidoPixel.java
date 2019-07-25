@@ -39,6 +39,7 @@ public class FinalizarPedidoPixel extends HttpServlet {
 				HttpSession sesion = request.getSession();
 				String datos;
 				datos = request.getParameter("datos");
+				System.out.println("DATOS " + datos);
 				PedidoCtrl pedido = new PedidoCtrl();
 				String respuesta = "";
 				respuesta = pedido.InsertarPedidoPixel(datos);

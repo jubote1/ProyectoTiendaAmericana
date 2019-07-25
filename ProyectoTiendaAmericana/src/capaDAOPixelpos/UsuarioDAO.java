@@ -134,6 +134,12 @@ public class UsuarioDAO {
 					{
 						administrador = false;
 					}
+					int ingreso = rs.getInt("ingreso");
+					usuario.setIngreso(ingreso);
+					if(ingreso == 0)
+					{
+						capaDAO.UsuarioDAO.darIngresoEmpleado(idUsuario, false);
+					}
 					usuario = new Usuario(idUsuario,nombreLargo,contrasena, nombreLargo, idTipoEmpleado, tipoInicio,administrador);
 					usuario.setEstadoDomiciliario(estadoDomiciliario);
 					break;

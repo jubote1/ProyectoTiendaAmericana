@@ -4,6 +4,9 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/WebContent/WEB-INF"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/WebContent/WEB-INF/lib"/>
+        <dependent-module archiveName="ProyectoTiendaAmericanaCliente.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ProyectoTiendaAmericanaCliente/ProyectoTiendaAmericanaCliente">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="ProyectoTiendaAmericana"/>
         <property name="java-output-path" value="/ProyectoTiendaAmericana/build/classes"/>
     </wb-module>

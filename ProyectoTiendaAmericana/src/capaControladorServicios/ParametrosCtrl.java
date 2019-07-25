@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import capaControlador.OperacionesTiendaCtrl;
 import capaDAOPixelpos.ParametrosDAO;
 import capaDAOPixelpos.TiendaDAO;
 import capaDAOPixelpos.GeneralDAO;
@@ -12,6 +13,7 @@ import capaDAOPixelpos.TiempoPedidoDAO;
 import capaModelo.Parametro;
 import capaModeloWeb.Correo;
 import capaModeloWeb.Tienda;
+import interfazGrafica.PrincipalLogueo;
 import utilidades.ControladorEnvioCorreo;
 
 public class ParametrosCtrl {
@@ -39,7 +41,7 @@ public class ParametrosCtrl {
 		{
 			respues = TiempoPedidoDAO.actualizarTiempoPedido(nuevotiempo, tienda.getIdTienda(), user);
 		}
-		
+		String respuestaHTML = "";
 		if(respues)
 		{
 			if (nuevotiempo > 70)
@@ -54,8 +56,9 @@ public class ParametrosCtrl {
 				ControladorEnvioCorreo contro = new ControladorEnvioCorreo(correo, correos);
 				contro.enviarCorreo();
 			}
+			respuestaHTML = "<html><b> <h1 align='center'><i>EL TIEMPO SE HA ACTUALIZADO CORRECTAMENTE EN EL CONTACT CENTER</i></h1></b></html>";
 		}
-		Respuesta.put("resultado", respues);
+		Respuesta.put("resultado", respuestaHTML);
 		listJSON.add(Respuesta);
 		return(Respuesta.toString());
 	}
@@ -76,5 +79,42 @@ public class ParametrosCtrl {
 		Parametro parametro = ParametrosDAO.obtenerParametro(valorParametro);
 		return parametro;
 	}
+	
+	//Para bloqueo y desbloqueo de tiendas en servicios
+	
+	public String activarEstadoTienda()
+	{
+		Tienda tienda = TiendaDAO.obtenerTienda();
+		OperacionesTiendaCtrl operTiendaCtrl = new OperacionesTiendaCtrl(false);
+		boolean respuesta = operTiendaCtrl.activarEstadoTienda(tienda.getNombretienda());
+		JSONObject respJSON = new JSONObject();
+		if(respuesta)
+		{
+			respJSON.put("resultado", "true");
+		}
+		else
+		{
+			respJSON.put("resultado", "false");
+		}
+		return(respJSON.toString());
+	}
+	
+	public String desactivarEstadoTienda()
+	{
+		OperacionesTiendaCtrl operTiendaCtrl = new OperacionesTiendaCtrl(false);
+		Tienda tienda = TiendaDAO.obtenerTienda();
+		boolean respuesta = operTiendaCtrl.desactivarEstadoTienda(tienda.getNombretienda());
+		JSONObject respJSON = new JSONObject();
+		if(respuesta)
+		{
+			respJSON.put("resultado", "true");
+		}
+		else
+		{
+			respJSON.put("resultado", "false");
+		}
+		return(respJSON.toString());
+	}
+	
 
 }

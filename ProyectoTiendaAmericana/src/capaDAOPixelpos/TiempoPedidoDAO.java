@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import capaConexion.ConexionBaseDatos;
+import interfazGrafica.Sesion;
 
 import org.apache.log4j.Logger;
 
@@ -64,9 +65,11 @@ public class TiempoPedidoDAO {
 			String actualizacion = "update parametros set valornumerico = " + nuevotiempo +  " where valorparametro = 'TIEMPOPEDIDO'";
 			logger.info(actualizacion);
 			stm.executeUpdate(actualizacion);
-			String insercionLog = "insert into log_tiempo_tienda (idtienda, usuario, nuevotiempo) values (" + idtienda +" , '" + user + "' , " + nuevotiempo + ")" ;
+			String insercionLog = "insert into parametros_log (usuario, nuevovalor,variable) values ('"  + "CONTACT" + "' , '" + nuevotiempo +"' ,'" + "TIEMPOPEDIDO" + "')" ;
 			logger.info(insercionLog);
 			stm.executeUpdate(insercionLog);
+			con1.close();
+			stm.close();
 			return(true);
 			
 		}catch (Exception e){

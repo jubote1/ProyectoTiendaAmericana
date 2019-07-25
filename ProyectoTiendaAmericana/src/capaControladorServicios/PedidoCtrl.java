@@ -14,6 +14,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import capaControlador.ClienteCtrl;
+import capaControlador.OperacionesTiendaCtrl;
 import capaControlador.ParametrosProductoCtrl;
 import capaControlador.ParametrosCtrl;
 import capaDAOPixelpos.EstadoDAO;
@@ -27,6 +28,7 @@ import capaModelo.FechaSistema;
 import capaModelo.Municipio;
 import capaModelo.NomenclaturaDireccion;
 import capaModelo.Parametro;
+import capaModelo.PedidoDescuento;
 import capaModelo.TiempoPedido;
 import capaModeloWeb.Cliente;
 import capaModeloWeb.DetallePedidoPixel;
@@ -72,6 +74,8 @@ public class PedidoCtrl {
 			 int idformapagotienda;
 			 int POS = 0;
 			 int tiempoPedido;
+			 double descuento = 0;
+			 String motivoDescuento = "";
 			  // Realizamos el parseo inicial de la información que se le envía al servicio
 			 Long tempidpedido = new Long((long)jsonPedido.get("idpedido"));
 			 idpedido =  (new Integer(tempidpedido.intValue()));
@@ -96,6 +100,15 @@ public class PedidoCtrl {
 			 Long temptiempoPedido = new Long( (long)jsonPedido.get("tiempopedido"));
 			 tiempoPedido = temptiempoPedido.intValue();
 			 Tienda tienda = TiendaDAO.obtenerTienda();
+			 //Controlamos excepción en caso de que no la encuentre
+			 try
+			 {
+				 motivoDescuento = (String)jsonPedido.get("motivodescuento");
+			 }catch(Exception e)
+			 {
+				 System.out.println("PROBLEMA CON MOTIVO DESCUENTO " + e.toString());
+				 motivoDescuento = "";
+			 }
 			 //Realizamos el casteo controlado de las variables para la creación del cliente
 			 int idMunicipio;
 			 float latitud;
@@ -136,6 +149,14 @@ public class PedidoCtrl {
 			 {
 				 System.out.println("PROBLEMA IDNOMENCLATURA " + e.toString());
 				 idNomenclatura = 0;
+			 }
+			 //Extraemos el valor del descuento
+			 try{
+				 descuento = (new Double( (long) jsonPedido.get("descuento"))).longValue();
+			 }catch(Exception e)
+			 {
+				 System.out.println("PROBLEMA DESCUENTO " + e.toString());
+				 descuento = 0;
 			 }
 			 Cliente cliente = new Cliente((new Integer(tempidcliente.intValue())), (String) jsonCliente.get("telefono") , (String) jsonCliente.get("nombres"), (String) jsonCliente.get("apellidos"), (String) jsonCliente.get("nombrecompania"), (String) jsonCliente.get("direccion"), municipio, idMunicipio,
 					latitud, longitud, (String) jsonCliente.get("zonadireccion"), (String) jsonCliente.get("observacion"), tienda.getNombretienda(), tienda.getIdTienda(), (new Integer(tempclimemcode.intValue())),idNomenclatura, (String) jsonCliente.get("numnomenclatura"), (String) jsonCliente.get("numnomenclatura2"), (String) jsonCliente.get("num3"), (String) jsonCliente.get("nomenclatura"));
@@ -183,7 +204,7 @@ public class PedidoCtrl {
 			 }else
 			 {
 				 //Para esta situación estaremos en el sistema POS Pizza Americana
-				 respuesta = confirmarPedidoPOSPMTienda(idpedido,valorformapago, valortotal, cliente,indicadorAct, dsnTienda, detPedidoPixel,idformapagotienda, tienda.getIdTienda(), usuario, tiempoPedido);
+				 respuesta = confirmarPedidoPOSPMTienda(idpedido,valorformapago, valortotal, cliente,indicadorAct, dsnTienda, detPedidoPixel,idformapagotienda, tienda.getIdTienda(), usuario, tiempoPedido, descuento, motivoDescuento);
 			 }
 			  JSONObject cadaResJSON = new JSONObject();
 			 cadaResJSON.put("creacliente", respuesta.getClienteCreado());
@@ -270,12 +291,27 @@ public class PedidoCtrl {
 	 * @param tiempoPedido El tiempo dado al pedido
 	 * @return
 	 */
-	public static RespuestaPedidoPixel confirmarPedidoPOSPMTienda(int idpedido,double valorformapago, double valortotal, Cliente cliente, boolean indicadorAct, String dsnTienda, ArrayList<DetallePedidoPixel> envioPixel, int idformapagotienda, int idTienda , String usuario, int tiempoPedido)
+	public static RespuestaPedidoPixel confirmarPedidoPOSPMTienda(int idpedido,double valorformapago, double valortotal, Cliente cliente, boolean indicadorAct, String dsnTienda, ArrayList<DetallePedidoPixel> envioPixel, int idformapagotienda, int idTienda , String usuario, int tiempoPedido, double descuento, String motivoDescuento)
 	{
 		// Se define la variable a retornar
 		int idPedidoTienda = 0;
-		//Iremos a separar la lógica de lo nuevo y de lo pasado
+		RespuestaPedidoPixel resPedPixel = new RespuestaPedidoPixel();
+		//Validamos primero que todo que el pedido del contact center no haya sido insertado 
+		boolean existePedido = validarPedidoContactExiste(idpedido);	
+		if(existePedido)
+		{
+			resPedPixel = new RespuestaPedidoPixel(false, 0, 0, 0, 0);
+			return(resPedPixel);
+		}
+		//Validaremos si el sistema está aperturado en la tienda
 		capaControlador.PedidoCtrl pedCtrl = new capaControlador.PedidoCtrl(false);
+		boolean estaAperturadaTienda = pedCtrl.isSistemaAperturado();
+		if(!estaAperturadaTienda)
+		{
+			resPedPixel = new RespuestaPedidoPixel(false, -1, 0, 0, 0);
+			return(resPedPixel);
+		}
+		//Iremos a separar la lógica de lo nuevo y de lo pasado
 		capaControlador.ParametrosProductoCtrl parProductoCtrl = new capaControlador.ParametrosProductoCtrl(false);
 		capaControlador.ParametrosCtrl parCtrl = new capaControlador.ParametrosCtrl(false);
 		//Obtenemos la fecha del sistema
@@ -332,7 +368,7 @@ public class PedidoCtrl {
 		}
 		
 		//Realizamos la inserción del encabezado pedido
-		idPedidoTienda = pedCtrl.InsertarEncabezadoPedido(idTienda, idClienteTienda, fechaPedido, usuario);
+		idPedidoTienda = pedCtrl.InsertarEncabezadoPedido(idTienda, idClienteTienda, fechaPedido, usuario, "CONTACT-CENTER");
 		
 		//Iniciamos la inserción de los detalles pedidos
 		double cantidad;
@@ -454,18 +490,25 @@ public class PedidoCtrl {
 			boolean resFormaPago = pedCtrl.insertarPedidoFormaPago(	0, 0,valorformapago, valortotal, (valorformapago - valortotal), idPedidoTienda);
 		}
 		
+		//Revisamos si dentro de la información proveniente del contact center hay descuento
+		if(descuento > 0)
+		{
+			//Creamos el objeto de descuento para luego ser ingresado en la base de datos
+			PedidoDescuento descPedido = new PedidoDescuento(idPedidoTienda, descuento, 0, motivoDescuento , "",0,0, "CONTACT-CENTER" );
+			//Realizamos la inserción del descuento en base de datos
+			boolean resp = pedCtrl.insertarPedidoDescuento(descPedido);
+		}
+		
 		//Finalizamos el pedido
 		//System.out.println("PARÁMETROS PARA FINALIZAR " + idPedidoTienda + " " + tiempoPedido + " " + idTipoPedido);
-		boolean resFinPedido = pedCtrl.finalizarPedido(idPedidoTienda, tiempoPedido, idTipoPedido);
+		boolean resFinPedido = pedCtrl.finalizarPedido(idPedidoTienda, tiempoPedido, idTipoPedido,1, new ArrayList<DetallePedido>(),false, false, false, false,0);
 		
 
-		
-				
-		RespuestaPedidoPixel resPedPixel = new RespuestaPedidoPixel();
-				
 		if(idPedidoTienda != 0)
 		{
 			resPedPixel = new RespuestaPedidoPixel(creaCliente, idPedidoTienda, idClienteTienda ,idpedido,cliente.getIdcliente());
+			//Una vez realizamos la inserción del pedido, insertamos el pedido en la tabla para control de duplicado
+			PedidoPOSPMDAO.insertarPedidoContactExiste(idpedido, idPedidoTienda);
 		}else
 		{
 			resPedPixel = new RespuestaPedidoPixel(false, 0, 0, 0, 0);
@@ -475,6 +518,12 @@ public class PedidoCtrl {
 		return(resPedPixel);
 	}
 	
+	
+	public static boolean validarPedidoContactExiste(int idPedido)
+	{
+		boolean respuesta = PedidoPOSPMDAO.validarPedidoContactExiste(idPedido);
+		return(respuesta);
+	}
 	
 	public boolean sePuedeFacturar(FechaSistema fechaSistema)
 	{
@@ -698,6 +747,8 @@ public class PedidoCtrl {
 	}
 	
 	//Realizamos desarrollo en capa controlador de lo que atenderá la necesidad de consulta de pedidos 
+	//Sobre este método agregaremos un nuevo campo qeu es comentario sobre el cual se tendrá en cuenta si el pedido tiene o no comentarios
+	//sobre otro productos que sea necesario llevar.
 	public String consultarPedidosDomiciliario(String idUsuario, int tipoConsulta)
 	{
 		ArrayList pedidos = new ArrayList();
@@ -723,7 +774,8 @@ public class PedidoCtrl {
 			cadaPedidoJSON.put("direccion", fila[6]);
 			cadaPedidoJSON.put("domiciliario", fila[9]);
 			cadaPedidoJSON.put("tp", fila[10]);
-			cadaPedidoJSON.put("tiempo", fila[11]);
+			cadaPedidoJSON.put("observacionespecial", fila[11]);
+			cadaPedidoJSON.put("tiempo", fila[12]);
 			listJSON.add(cadaPedidoJSON);
 		}
 		return(listJSON.toJSONString());
@@ -836,6 +888,71 @@ public class PedidoCtrl {
 				int idPedido = Integer.parseInt((String)pedido.get("idpedido"));
 				//Realizamos la salida del domicilio en específico
 				pedidoCtrlTienda.ActualizarEstadoPedido((int)idPedido, (int) estEmpDom , (int) estEnRutaDom,usuario,true, Integer.parseInt(idUsuario),true);
+			}
+			//Luego de avanzar todos los pedidos damos la entrada al domiciliario
+			capaControlador.EmpleadoCtrl empCtrl = new capaControlador.EmpleadoCtrl(false);
+			empCtrl.salidaDomiciliario(Integer.parseInt(idUsuario));
+			
+			JSONObject resultado = new JSONObject();
+			resultado.put("resultado", "exitoso");
+			return(resultado.toString());
+		}
+		
+		//Método que se encargará de devolver de estado domicilios que un domiciliario pudo seleccionar por error
+		public String devolverEstadoDomicilio(String idUsuario, String usuario, String JSONidPedido)
+		{
+			//Creamos el JSONArray con el JSON que se recibe como parámetro con el o los pedidos en formato JSON
+			JSONArray JSONPedidos = new JSONArray();
+			try
+			{
+				JSONParser parser = new JSONParser();
+				Object objParser = parser.parse(JSONidPedido);
+				JSONPedidos = (JSONArray) objParser;
+			}catch(Exception e)
+			{
+				System.out.println("Error parseando el JSON recibido por aplicación Tablet " + e.toString());
+			}
+			//Se traen el listado de pedidos 
+			ArrayList pedidos = new ArrayList();
+			capaControlador.PedidoCtrl pedidoCtrlTienda = new capaControlador.PedidoCtrl(false);
+			//Realizamos un recorrido de cada uno de los pedidos para darle la llegada al domiciliario
+			long estEnRutaDom;
+			//variable que indica el estado cuando un domicilio es entregado
+			long estEmpDom;
+			
+			//Se trae de base de datos los estados involucrados 
+			ParametrosCtrl parCtrl = new ParametrosCtrl(false);
+			Parametro parametro = parCtrl.obtenerParametro("EMPACADODOMICILIO");
+			long valNum = 0;
+			try
+			{
+				valNum = (long) parametro.getValorNumerico();
+			}catch(Exception e)
+			{
+				System.out.println("SE TUVO ERROR TOMANDO LA CONSTANTE DE PEDIDOS EMPACADOS");
+				valNum = 0;
+			}
+			estEmpDom = valNum;
+			parametro = parCtrl.obtenerParametro("ENRUTADOMICILIO");
+			try
+			{
+				valNum = (long) parametro.getValorNumerico();
+			}catch(Exception e)
+			{
+				System.out.println("SE TUVO ERROR TOMANDO LA CONSTANTE DE PEDIDOS EN RUTA");
+				valNum = 0;
+			}
+			estEnRutaDom = valNum;
+					
+			//recorremos el arreglo para dar salida a todos los pedidos
+			for(int i = 0; i < JSONPedidos.size(); i++)
+			{
+				JSONObject pedido =(JSONObject) JSONPedidos.get(i);
+				int idPedido = Integer.parseInt((String)pedido.get("idpedido"));
+				//Realizamos la salida del domicilio en específico
+				pedidoCtrlTienda.ActualizarEstadoPedido((int)idPedido,(int) estEnRutaDom, (int) estEmpDom ,usuario,true, Integer.parseInt(idUsuario),true);
+				pedidoCtrlTienda.desasignarDomiciliarioPedido((int)idPedido);
+				
 			}
 			//Luego de avanzar todos los pedidos damos la entrada al domiciliario
 			capaControlador.EmpleadoCtrl empCtrl = new capaControlador.EmpleadoCtrl(false);
