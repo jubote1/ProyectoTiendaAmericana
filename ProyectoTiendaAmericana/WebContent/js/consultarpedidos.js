@@ -1,5 +1,8 @@
  var dtPedidos;
  var server;
+ var rutaMapa;
+ var latitudTienda;
+ var longitudTienda;
 
 // A continuación  la ejecucion luego de cargada la pagina
 $(document).ready(function() {
@@ -24,12 +27,28 @@ $(document).ready(function() {
         } );
 
     //Con solo cargar la página remos por por los pedidos pendientes de entrega y salidos del horno.
+    obtenerRutaMapa();
     obtenerPedidosEmpacadosDomicilio();
 			
    
 	
   
  });    
+
+function obtenerRutaMapa()
+{
+    $.ajax({ 
+                url: server + 'GetRutaMapaTienda', 
+                dataType: 'json', 
+                async: false, 
+                success: 
+                function(data){ 
+                    rutaMapa = data.rutamapa;
+                    latitudTienda = data.latitud;
+                    longitudTienda = data.longitud;
+                }
+    });
+}
 
 //Método que invoca el servicio para obtener lista de municipios parametrizados en el sistema
 function obtenerPedidosEmpacadosDomicilio(){
@@ -45,11 +64,11 @@ function obtenerPedidosEmpacadosDomicilio(){
                         var longitud;
                         var map = new google.maps.Map($("#mapas").get(0), {
                             zoom: 7,
-                            center: new google.maps.LatLng(6.22339, -75.6281),
+                            center: new google.maps.LatLng(latitudTienda, longitudTienda),
                             mapTypeId: google.maps.MapTypeId.ROADMAP
                         });
                         var ctaLayer = new google.maps.KmlLayer({
-                            url: 'https://raw.githubusercontent.com/Andres-FA/KMLZonasDeReparto/master/PizzaAmericana-ZonasDeRepartoTotales-Ver_03.kml',
+                            url: rutaMapa,
                             map: map,
                             scrollwheel: false,
                             zoom: 17
@@ -90,7 +109,7 @@ function initMap() {
 		var map = new google.maps.Map(document.getElementById("mapas"), {
           zoom: 13,
           scrollwheel: false,
-          center: {lat: 6.29139, lng: -75.53611}
+          center: {lat: 6.264574, lng: -75.59654}
         });
 
        
@@ -105,12 +124,12 @@ function geocodeSinServicio(lat, long, idPedido)
     latitud = lat;
     var map = new google.maps.Map($("#mapas").get(0), {
 		zoom: 7,
-		center: new google.maps.LatLng(6.22339, -75.6281),
+		center: new google.maps.LatLng(latitudTienda, longitudTienda),
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	});
 
     var ctaLayer = new google.maps.KmlLayer({
-		url: 'https://raw.githubusercontent.com/Andres-FA/KMLZonasDeReparto/master/PizzaAmericana-ZonasDeRepartoTotales-Ver_03.kml',
+		url: rutaMapa,
 		map: map,
 		scrollwheel: false,
 		zoom: 17

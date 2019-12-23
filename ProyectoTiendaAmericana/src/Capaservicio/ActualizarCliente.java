@@ -109,7 +109,7 @@ public class ActualizarCliente extends HttpServlet {
         }
         String dsnODBC = request.getParameter("dsnodbc");
         ClienteCtrl ClienCtrl = new ClienteCtrl();
-        String respuesta = ClienCtrl.actualizarCliente(idCliente,telefono, nombres, apellidos, nombreCompania,  direccion, municipio, latitud, longitud, zona, observacion, tienda, memcode, idnomenclatura, numNomenclatura, numNomenclatura2, num3, pos,dsnODBC, idTienda, idMunicipio);
+        String respuesta = ClienCtrl.actualizarCliente(idCliente,telefono, nombres, apellidos, nombreCompania,  direccion, municipio, latitud, longitud, zona, observacion, tienda, memcode, idnomenclatura, numNomenclatura, numNomenclatura2, num3, pos,dsnODBC, idTienda, idMunicipio, 0);
         PrintWriter out = response.getWriter();
 		out.write(respuesta);
 	}

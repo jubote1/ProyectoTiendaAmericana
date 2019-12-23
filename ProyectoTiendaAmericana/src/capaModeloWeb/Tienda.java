@@ -5,6 +5,7 @@ public class Tienda {
 	private int idTienda;
 	private String nombretienda;
 	private String urlContact;
+	
 	public int getIdTienda() {
 		return idTienda;
 	}

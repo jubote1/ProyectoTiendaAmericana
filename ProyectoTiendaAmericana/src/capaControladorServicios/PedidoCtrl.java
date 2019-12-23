@@ -115,6 +115,14 @@ public class PedidoCtrl {
 			 float longitud;
 			 String municipio;
 			 int idNomenclatura;
+			 double distanciaTienda;
+			 try{
+				 distanciaTienda = (new Double( (double) jsonCliente.get("distanciatienda"))).doubleValue();
+			 }catch(Exception e)
+			 {
+				 System.out.println("PROBLEMA DISTANCIA TIENDA " + e.toString());
+				 distanciaTienda = 0;
+			 }
 			 try{
 				 latitud = (new Double( (double) jsonCliente.get("latitud"))).floatValue();
 			 }catch(Exception e)
@@ -159,7 +167,7 @@ public class PedidoCtrl {
 				 descuento = 0;
 			 }
 			 Cliente cliente = new Cliente((new Integer(tempidcliente.intValue())), (String) jsonCliente.get("telefono") , (String) jsonCliente.get("nombres"), (String) jsonCliente.get("apellidos"), (String) jsonCliente.get("nombrecompania"), (String) jsonCliente.get("direccion"), municipio, idMunicipio,
-					latitud, longitud, (String) jsonCliente.get("zonadireccion"), (String) jsonCliente.get("observacion"), tienda.getNombretienda(), tienda.getIdTienda(), (new Integer(tempclimemcode.intValue())),idNomenclatura, (String) jsonCliente.get("numnomenclatura"), (String) jsonCliente.get("numnomenclatura2"), (String) jsonCliente.get("num3"), (String) jsonCliente.get("nomenclatura"));
+					latitud, longitud, (String) jsonCliente.get("zonadireccion"), (String) jsonCliente.get("observacion"), tienda.getNombretienda(), tienda.getIdTienda(), (new Integer(tempclimemcode.intValue())),idNomenclatura, (String) jsonCliente.get("numnomenclatura"), (String) jsonCliente.get("numnomenclatura2"), (String) jsonCliente.get("num3"), (String) jsonCliente.get("nomenclatura"), distanciaTienda);
 			 //Sacamos la cantidad de detalles pedidos
 			 Long tempcantidaditem = new Long((long)jsonPedido.get("cantidaditempedido"));
 			 cantidaditempedido = (new Integer(tempcantidaditem.intValue()));
@@ -334,6 +342,7 @@ public class PedidoCtrl {
 		String observacion = cliente.getObservacion();
 		float latitud = cliente.getLatitud();
 		float longitud = cliente.getLontitud();
+		double distanciaTienda = cliente.getDistanciaTienda();
 		if(observacion.length() > 200)
 		{
 			observacion = observacion.substring(0, 200);
@@ -349,7 +358,7 @@ public class PedidoCtrl {
 		if(cliente.getMemcode() == 0)
 		{
 			//Realizamos la creación del cliente capturando todos los valores enviados como parámetros
-			capaModelo.Cliente crearCliente = new capaModelo.Cliente(0, telefono, nombre, apellido, compania, direccion, "", idMunicipio,latitud, longitud, zona , observacion, tienda, idTienda, 0, idNomemclatura, numNomen1, numNomen2, num3, "");
+			capaModelo.Cliente crearCliente = new capaModelo.Cliente(0, telefono, nombre, apellido, compania, direccion, "", idMunicipio,latitud, longitud, zona , observacion, tienda, idTienda, 0, idNomemclatura, numNomen1, numNomen2, num3, "", distanciaTienda);
 			//Realizamos la inserción del cliente
 			int idCliIns = clienteCtrl.insertarCliente(crearCliente);
 			//llevamos a la variable idClienteTienda el id del cliente insertado
@@ -360,7 +369,7 @@ public class PedidoCtrl {
 		}else
 		{
 			//Creamos objeto para la actualización del cliente
-			capaModelo.Cliente actualizaCliente = new capaModelo.Cliente(cliente.getMemcode(), telefono, nombre, apellido, compania, direccion, "", idMunicipio,latitud, longitud, zona , observacion, tienda, idTienda, 0, idNomemclatura, numNomen1, numNomen2, num3, "");
+			capaModelo.Cliente actualizaCliente = new capaModelo.Cliente(cliente.getMemcode(), telefono, nombre, apellido, compania, direccion, "", idMunicipio,latitud, longitud, zona , observacion, tienda, idTienda, 0, idNomemclatura, numNomen1, numNomen2, num3, "", distanciaTienda);
 			//Obtenemos el idClienteTienda del valor que ya viene en los parámetros dado que ya este existe.
 			idClienteTienda = cliente.getMemcode();
 			//Realizamos la actualización del cliente si viene al caso
@@ -494,7 +503,7 @@ public class PedidoCtrl {
 		if(descuento > 0)
 		{
 			//Creamos el objeto de descuento para luego ser ingresado en la base de datos
-			PedidoDescuento descPedido = new PedidoDescuento(idPedidoTienda, descuento, 0, motivoDescuento , "",0,0, "CONTACT-CENTER" );
+			PedidoDescuento descPedido = new PedidoDescuento(idPedidoTienda, descuento, 0, motivoDescuento , "",0,0, "CONTACT-CENTER", "CONTACT-CENTER" );
 			//Realizamos la inserción del descuento en base de datos
 			boolean resp = pedCtrl.insertarPedidoDescuento(descPedido);
 		}
