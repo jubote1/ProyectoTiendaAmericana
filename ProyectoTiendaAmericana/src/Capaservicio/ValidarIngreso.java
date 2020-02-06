@@ -50,7 +50,7 @@ public class ValidarIngreso extends HttpServlet {
 					//Debemos de validar la existencia del usuario
 					AutenticacionCtrl aut = new AutenticacionCtrl();
 					usuario = aut.validarClaveRapida(claveRapida);
-					logger.info("resultado de validación de autenticación de usuario " + usuario);
+					logger.info("resultado de validación de autenticación de usuario " + usuario );
 				}catch(Exception e)
 				{
 					logger.error(e.toString());

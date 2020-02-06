@@ -1,5 +1,8 @@
 package capaDAOPixelpos;
 import capaConexion.ConexionBaseDatos;
+import capaDAO.EmpleadoTemporalDiaDAO;
+import capaDAO.TiendaDAO;
+import capaModelo.FechaSistema;
 import capaModelo.Usuario;
 import capaModeloWeb.UsuarioAnt;
 
@@ -135,10 +138,32 @@ public class UsuarioDAO {
 						administrador = false;
 					}
 					int ingreso = rs.getInt("ingreso");
+					int esEmpleado = rs.getInt("es_empleado");
 					usuario.setIngreso(ingreso);
+					usuario.setEsEmpleado(esEmpleado);
 					if(ingreso == 0)
 					{
-						capaDAO.UsuarioDAO.darIngresoEmpleado(idUsuario, false);
+						if(esEmpleado == 0)
+						{
+							//Validamos si el empleado temporal ya se dió ingreso si as así continuamos, sino debería de retornarse error.
+							FechaSistema fecha = TiendaDAO.obtenerFechasSistema( false);
+							//Se cambio método para retornar un String con el nombre del empleado si existe o con vacío si no existe
+							String nombreTemporal = EmpleadoTemporalDiaDAO.ingresoEmpleadoTemporal(idUsuario, fecha.getFechaApertura(),  false);
+							if(nombreTemporal.length() > 0)
+							{
+								capaDAO.UsuarioDAO.darIngresoEmpleado(idUsuario, false);
+								//Modificamos el nombre para que al retonarlo incluya el nombre del personal temporal
+								nombreLargo = nombreLargo + " " + nombreTemporal;
+							}else
+							{
+								//Retornaremos un -2 en el idUsuario cuando un empleado temporal no se ha dado ingreso
+								idUsuario = -2;
+							}
+						}
+						else
+						{
+							capaDAO.UsuarioDAO.darIngresoEmpleado(idUsuario, false);
+						}
 					}
 					usuario = new Usuario(idUsuario,nombreLargo,contrasena, nombreLargo, idTipoEmpleado, tipoInicio,administrador);
 					usuario.setEstadoDomiciliario(estadoDomiciliario);
