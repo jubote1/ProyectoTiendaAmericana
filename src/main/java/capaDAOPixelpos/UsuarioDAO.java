@@ -1,10 +1,11 @@
 package capaDAOPixelpos;
 import capaConexion.ConexionBaseDatos;
+import capaModeloWeb.UsuarioAnt;
 import capaDAOPOS.EmpleadoTemporalDiaDAO;
 import capaDAOPOS.TiendaDAO;
 import capaModeloPOS.FechaSistema;
 import capaModeloPOS.Usuario;
-import capaModeloWeb.UsuarioAnt;
+
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;

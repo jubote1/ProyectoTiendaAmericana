@@ -6,13 +6,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
-import capaModeloPOS.Estado;
-import capaModeloPOS.EstadoPedido;
+
 import capaModeloWeb.Cliente;
 import capaModeloWeb.DetallePedidoPixel;
 import capaModeloWeb.EstadoPedidoTienda;
 import capaModeloWeb.RespuestaPedidoPixel;
 import capaModeloWeb.Tienda;
+import capaModeloPOS.Estado;
+import capaModeloPOS.EstadoPedido;
 import capaConexion.ConexionBaseDatos;
 public class PedidoPOSPMDAO {
 	

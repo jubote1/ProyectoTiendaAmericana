@@ -14,22 +14,27 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import capaControladorPOS.ClienteCtrl;
-import capaControladorPOS.ImpuestoCtrl;
-import capaControladorPOS.OperacionesTiendaCtrl;
-import capaControladorPOS.ParametrosProductoCtrl;
-import capaControladorPOS.PromocionesCtrl;
-import capaDAOFirebase.CrudFirebase;
-import capaDAOPOS.ClienteDAO;
-import capaDAOPOS.ParametrosDAO;
-import capaDAOPOS.PedidoDAO;
-import capaControladorPOS.ParametrosCtrl;
 import capaDAOPixelpos.EstadoDAO;
 import capaDAOPixelpos.PedidoPOSPMDAO;
 import capaDAOPixelpos.Main;
 import capaDAOPixelpos.PedidoPOSPMDAO;
 import capaDAOPixelpos.PedidoPixelDAO;
 import capaDAOPixelpos.TiendaDAO;
+import capaModeloWeb.Cliente;
+import capaModeloWeb.DetallePedidoPixel;
+import capaModeloWeb.EstadoPedidoTienda;
+import capaModeloWeb.RespuestaPedidoPixel;
+import capaModeloWeb.Tienda;
+import capaControladorPOS.ClienteCtrl;
+import capaControladorPOS.ImpuestoCtrl;
+import capaControladorPOS.OperacionesTiendaCtrl;
+import capaControladorPOS.ParametrosCtrl;
+import capaControladorPOS.ParametrosProductoCtrl;
+import capaControladorPOS.PromocionesCtrl;
+import capaDAOFirebase.CrudFirebase;
+import capaDAOPOS.ClienteDAO;
+import capaDAOPOS.ParametrosDAO;
+import capaDAOPOS.PedidoDAO;
 import capaModeloPOS.Correo;
 import capaModeloPOS.DetallePedido;
 import capaModeloPOS.FechaSistema;
@@ -39,11 +44,6 @@ import capaModeloPOS.NomenclaturaDireccion;
 import capaModeloPOS.Parametro;
 import capaModeloPOS.PedidoDescuento;
 import capaModeloPOS.TiempoPedido;
-import capaModeloWeb.Cliente;
-import capaModeloWeb.DetallePedidoPixel;
-import capaModeloWeb.EstadoPedidoTienda;
-import capaModeloWeb.RespuestaPedidoPixel;
-import capaModeloWeb.Tienda;
 import interfazGraficaPOS.PrincipalLogueo;
 import interfazGraficaPOS.Sesion;
 import interfazGraficaPOS.VentPedTomarPedidos;
@@ -656,7 +656,7 @@ public class PedidoCtrl implements Runnable {
 			//Obtenemos el idClienteTienda del valor que ya viene en los parámetros dado que ya este existe.
 			idClienteTienda = cliente.getMemcode();
 			//Realizamos la actualización del cliente si viene al caso
-			clienteCtrl.actualizarCliente(actualizaCliente);
+			clienteCtrl.actualizarClienteNoFisico(actualizaCliente);
 		}
 		
 		//Procesamos el origen del pedido

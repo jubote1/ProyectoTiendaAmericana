@@ -5,8 +5,8 @@ import org.json.simple.JSONObject;
 
 import capaControladorServicios.AutenticacionCtrl;
 import capaDAOPixelpos.UsuarioDAO;
-import capaModeloPOS.Usuario;
 import capaModeloWeb.UsuarioAnt;
+import capaModeloPOS.Usuario;
 
 /**
  * Clase AutenticacionCtrl tiene como objetivo hacer las veces de Controlador para la autenticación de usuarios

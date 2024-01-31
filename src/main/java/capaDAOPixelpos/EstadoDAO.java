@@ -7,12 +7,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import capaConexion.ConexionBaseDatos;
+import capaModeloWeb.Tienda;
+import capaModeloWeb.UsuarioAnt;
 import capaModeloPOS.Estado;
 import capaModeloPOS.EstadoPedido;
 import capaModeloPOS.Impuesto;
 import capaModeloPOS.Producto;
-import capaModeloWeb.Tienda;
-import capaModeloWeb.UsuarioAnt;
+
 import org.apache.log4j.Logger;
 
 import com.mysql.cj.jdbc.result.ResultSetMetaData;

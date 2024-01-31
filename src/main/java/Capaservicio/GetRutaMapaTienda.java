@@ -8,8 +8,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import capaControladorPOS.OperacionesTiendaCtrl;
+
 import capaControladorServicios.ParametrosCtrl;
+import capaControladorPOS.OperacionesTiendaCtrl;
 
 /**
  * Servlet implementation class GetTiendas
