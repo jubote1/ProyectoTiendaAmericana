@@ -27,6 +27,42 @@ public class Cliente {
 	private String telefonoCelular;
 	private String email;
 	private String politicaDatos;
+	private String clienteSinIden;
+	private String emailFacturacion;
+	private int idTipoPersona;
+	private String identificacion;
+	
+	public String getClienteSinIden() {
+		return clienteSinIden;
+	}
+
+	public void setClienteSinIden(String clienteSinIden) {
+		this.clienteSinIden = clienteSinIden;
+	}
+
+	public String getEmailFacturacion() {
+		return emailFacturacion;
+	}
+
+	public void setEmailFacturacion(String emailFacturacion) {
+		this.emailFacturacion = emailFacturacion;
+	}
+
+	public int getIdTipoPersona() {
+		return idTipoPersona;
+	}
+
+	public void setIdTipoPersona(int idTipoPersona) {
+		this.idTipoPersona = idTipoPersona;
+	}
+
+	public String getIdentificacion() {
+		return identificacion;
+	}
+
+	public void setIdentificacion(String identificacion) {
+		this.identificacion = identificacion;
+	}
 	
 	
 	

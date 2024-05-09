@@ -65,23 +65,23 @@ public class PedidoCtrl implements Runnable {
 			{
 				JSONObject pedido =(JSONObject) JSONPedidosNoti.get(i);
 				int idPedido = Integer.parseInt((String)pedido.get("idpedido"));
-				// En este punto vamos a realizar la lógica de implementación
+				// En este punto vamos a realizar la lï¿½gica de implementaciï¿½n
 				//Obtenemos el cliente que va a ser sujeto de la notificacion
 				capaModeloPOS.Cliente clientePed = PedidoDAO.obtenerClientePedido(idPedido, false);
-				//Una vez se tiene el cliente tomamos la lógica para enviar el el correo y el mensaje de texto
+				//Una vez se tiene el cliente tomamos la lï¿½gica para enviar el el correo y el mensaje de texto
 				PromocionesCtrl promoCtrl = new PromocionesCtrl(false);
-				//Procesamos los mensajes de texto y correo electrónico
-				String mensajeTexto = "Pizza Americana te informa que el domiciliario ya está en ruta para entregarte tu pedido # " + idPedido + ". Disfrutala!"; 
+				//Procesamos los mensajes de texto y correo electrï¿½nico
+				String mensajeTexto = "Pizza Americana te informa que el domiciliario ya estï¿½ en ruta para entregarte tu pedido # " + idPedido + ". Disfrutala!"; 
 				String telefonoCelular = clientePed.getTelefonoCelular();
 				
-				//Envío del mensaje de Texto siempre y cuando se acepte la política de manejo de datos
+				//Envï¿½o del mensaje de Texto siempre y cuando se acepte la polï¿½tica de manejo de datos
 				if(clientePed.getPoliticaDatos().equals(new String("S")))
 				{
 					if(telefonoCelular != null)
 					{
 						promoCtrl.ejecutarPHPEnvioMensaje( "57"+ telefonoCelular, mensajeTexto);
 					}
-					//verificamos la existencia de correo electrónico para de esta manera realizar el envío de este
+					//verificamos la existencia de correo electrï¿½nico para de esta manera realizar el envï¿½o de este
 					if(clientePed.getEmail() != null)
 					{
 						if(clientePed.getEmail().length()> 0)
@@ -96,7 +96,7 @@ public class PedidoCtrl implements Runnable {
 							correos.add(correoEle);
 							correo.setContrasena(claveCorreo);
 							correo.setUsuarioCorreo(cuentaCorreo);
-							String mensajeCuerpoCorreo = "Querido Cliente!!! Pizza Americana te informa que el domiciliario ya está en ruta para entregarte tu pedido # " + idPedido + ". Disfrutala"
+							String mensajeCuerpoCorreo = "Querido Cliente!!! Pizza Americana te informa que el domiciliario ya estï¿½ en ruta para entregarte tu pedido # " + idPedido + ". Disfrutala"
 									+ "\n" + "<body><a href=\"https://pizzaamericana.co/pedido-en-camino/\"><img align=\" center \" src=\"https://pizzaamericana.co/pedido-en-camino/\"></a></body>";
 							correo.setMensaje(mensajeCuerpoCorreo);
 							ControladorEnvioCorreo contro = new ControladorEnvioCorreo(correo, correos);
@@ -143,10 +143,10 @@ public class PedidoCtrl implements Runnable {
 	}
 	
 	/**
-	 * Método que tiene toda la lógica para descomponer el json entrante, insertar el pedido en la tienda y entregar
+	 * Mï¿½todo que tiene toda la lï¿½gica para descomponer el json entrante, insertar el pedido en la tienda y entregar
 	 * un objeto tipo Respuesta Pedido y entregar finalmente un json de respuesta.
-	 * @param datos Se recibe un string en formato JSON con todos los datos para la inserción del pedido.
-	 * @return Se retorna un string en formato JSON con la respuesta de la inserción del pedido.
+	 * @param datos Se recibe un string en formato JSON con todos los datos para la inserciï¿½n del pedido.
+	 * @return Se retorna un string en formato JSON con la respuesta de la inserciï¿½n del pedido.
 	 */
 	/**
 	 * @param datos
@@ -186,7 +186,7 @@ public class PedidoCtrl implements Runnable {
 		     //Plataforma de pedidos
 		     String plataforma = "";
 		     String idPedidoAlt = "";
-			  // Realizamos el parseo inicial de la información que se le envía al servicio
+			  // Realizamos el parseo inicial de la informaciï¿½n que se le envï¿½a al servicio
 			 Long tempidpedido = new Long((long)jsonPedido.get("idpedido"));
 			 idpedido =  (new Integer(tempidpedido.intValue()));
 			 //insertado = (boolean)jsonPedido.get("insertado");
@@ -238,7 +238,7 @@ public class PedidoCtrl implements Runnable {
 				 tiempoPedido = temptiempoPedido.intValue();
 			 }
 			 Tienda tienda = TiendaDAO.obtenerTienda();
-			 //Controlamos excepción en caso de que no la encuentre
+			 //Controlamos excepciï¿½n en caso de que no la encuentre
 			 try
 			 {
 				 motivoDescuento = (String)jsonPedido.get("motivodescuento");
@@ -247,7 +247,7 @@ public class PedidoCtrl implements Runnable {
 				 System.out.println("PROBLEMA CON MOTIVO DESCUENTO " + e.toString());
 				 motivoDescuento = "";
 			 }
-			 //Capturamos la información de si se debe reintegrar o no el descuento
+			 //Capturamos la informaciï¿½n de si se debe reintegrar o no el descuento
 			 try
 			 {
 				 reintegro = (String)jsonPedido.get("reintegro");
@@ -260,7 +260,7 @@ public class PedidoCtrl implements Runnable {
 				 System.out.println("PROBLEMA CON REINTEGRO " + e.toString());
 				 reintegro = "";
 			 }
-			 //Capturamos la información de programación del pedido
+			 //Capturamos la informaciï¿½n de programaciï¿½n del pedido
 			 try
 			 {
 				 programado = (String)jsonPedido.get("programado");
@@ -288,7 +288,7 @@ public class PedidoCtrl implements Runnable {
 			 {
 				 idTipoPedido = 0;
 			 }
-			 //Incluimos la modificación para tomar los datos de plataforma de pedidos
+			 //Incluimos la modificaciï¿½n para tomar los datos de plataforma de pedidos
 			 try
 			 {
 				 plataforma  = (String)jsonPedido.get("plataforma");
@@ -305,7 +305,7 @@ public class PedidoCtrl implements Runnable {
 			 }
 			 
 			 
-			 //Realizamos el casteo controlado de las variables para la creación del cliente
+			 //Realizamos el casteo controlado de las variables para la creaciï¿½n del cliente
 			 int idMunicipio;
 			 float latitud;
 			 float longitud;
@@ -315,6 +315,10 @@ public class PedidoCtrl implements Runnable {
 			 String telefonoCelular;
 			 String email;
 			 String politicaDatos;
+			 String emailFact;
+			 String clienteSinIden;
+			 int idTipoPersona;
+			 String identificacion;
 			 try{
 				 distanciaTienda = (new Double( (double) jsonCliente.get("distanciatienda"))).doubleValue();
 			 }catch(Exception e)
@@ -372,6 +376,34 @@ public class PedidoCtrl implements Runnable {
 				 politicaDatos = "";
 			 }
 			 try{
+				 emailFact = (String) jsonCliente.get("emailfact");
+			 }catch(Exception e)
+			 {
+				 System.out.println("PROBLEMA emailfact " + e.toString());
+				 emailFact = "";
+			 }
+			 try{
+				 clienteSinIden = (String) jsonCliente.get("clientesiniden");
+			 }catch(Exception e)
+			 {
+				 System.out.println("PROBLEMA Cliente sin Identificar " + e.toString());
+				 clienteSinIden = "S";
+			 }
+			 try{
+				 idTipoPersona = (new Long( (long) jsonCliente.get("idtipopersona"))).intValue();
+			 }catch(Exception e)
+			 {
+				 System.out.println("PROBLEMA idtipopersona " + e.toString());
+				 idTipoPersona = 1;
+			 }
+			 try{
+				 identificacion = (String) jsonCliente.get("identificacion");
+			 }catch(Exception e)
+			 {
+				 System.out.println("PROBLEMA identificacion " + e.toString());
+				 identificacion = "";
+			 }
+			 try{
 				 idNomenclatura = (new Long( (long) jsonCliente.get("idnomenclatura"))).intValue();
 			 }catch(Exception e)
 			 {
@@ -397,6 +429,10 @@ public class PedidoCtrl implements Runnable {
 			 Cliente cliente = new Cliente((new Integer(tempidcliente.intValue())), (String) jsonCliente.get("telefono") , (String) jsonCliente.get("nombres"), (String) jsonCliente.get("apellidos"), (String) jsonCliente.get("nombrecompania"), (String) jsonCliente.get("direccion"), municipio, idMunicipio,
 					latitud, longitud, (String) jsonCliente.get("zonadireccion"), (String) jsonCliente.get("observacion"), tienda.getNombretienda(), tienda.getIdTienda(), (new Integer(tempclimemcode.intValue())),idNomenclatura, (String) jsonCliente.get("numnomenclatura"), (String) jsonCliente.get("numnomenclatura2"), (String) jsonCliente.get("num3"), (String) jsonCliente.get("nomenclatura"), distanciaTienda, telefonoCelular, email, politicaDatos);
 			 //Sacamos la cantidad de detalles pedidos
+			 cliente.setEmailFacturacion(emailFact);
+			 cliente.setClienteSinIden(clienteSinIden);
+			 cliente.setIdTipoPersona(idTipoPersona);
+			 cliente.setIdentificacion(identificacion);
 			 Long tempcantidaditem = new Long((long)jsonPedido.get("cantidaditempedido"));
 			 cantidaditempedido = (new Integer(tempcantidaditem.intValue()));
 			 // Realizamos el parseo para el pedido
@@ -447,14 +483,14 @@ public class PedidoCtrl implements Runnable {
 				 }
 			 }
 			 RespuestaPedidoPixel respuesta  = new RespuestaPedidoPixel();
-			 //Realizamos la validación de que POS para terminar el pedido.
+			 //Realizamos la validaciï¿½n de que POS para terminar el pedido.
 			 if(POS == 2)
 			 {
-				 //Bajo esta condición estamos en el sistema Pixel POS
+				 //Bajo esta condiciï¿½n estamos en el sistema Pixel POS
 				 respuesta = PedidoPixelDAO.confirmarPedidoPixelTienda(idpedido,valorformapago, valortotal, cliente,indicadorAct, dsnTienda, detPedidoPixel,idformapagotienda);
 			 }else
 			 {
-				 //Para esta situación estaremos en el sistema POS Pizza Americana
+				 //Para esta situaciï¿½n estaremos en el sistema POS Pizza Americana
 				 respuesta = confirmarPedidoPOSPMTienda(idpedido,valorformapago, valortotal, cliente,indicadorAct, dsnTienda, detPedidoPixel,idformapagotienda, tienda.getIdTienda(), usuario, tiempoPedido, descuento, motivoDescuento, reintegro, origen, programado, horaProgramado, idTipoPedido, plataforma, idPedidoAlt);
 			 }
 			  JSONObject cadaResJSON = new JSONObject();
@@ -473,10 +509,10 @@ public class PedidoCtrl implements Runnable {
 	}
 	
 	/**
-	 * Método de la capa controladora que se encarga de retornar en formato Json los estados de los pedidos tipo 
-	 * domicilio que tiene la tienda, recopilando los que están pendientes de preparación, los que están en ruta
-	 * y los que están en estado finalizado.
-	 * @param dsnODBC Se recibe el datasourcename para la conexión a la base de datos.
+	 * Mï¿½todo de la capa controladora que se encarga de retornar en formato Json los estados de los pedidos tipo 
+	 * domicilio que tiene la tienda, recopilando los que estï¿½n pendientes de preparaciï¿½n, los que estï¿½n en ruta
+	 * y los que estï¿½n en estado finalizado.
+	 * @param dsnODBC Se recibe el datasourcename para la conexiï¿½n a la base de datos.
 	 * @return
 	 */
 	public String ConsultarEstadoPedidoTienda(String dsnODBC, int pos)
@@ -556,18 +592,18 @@ public class PedidoCtrl implements Runnable {
 	
 	
 	/**
-	 * Método en la capa controladora que se encarga de la inserción del pedido tomado desde el contac center
+	 * Mï¿½todo en la capa controladora que se encarga de la inserciï¿½n del pedido tomado desde el contac center
 	 * en el sistema POS de Pizza Americana
 	 * @param idpedido se refiere al idpedido que se le dio al pedido en el sistema contact center
 	 * @param valorformapago el valor que se va a pagar con la forma de pago determinada
 	 * @param valortotal el valor total del pedido
-	 * @param cliente Objeto tipo cliente que encapsula toda la información del cliente
+	 * @param cliente Objeto tipo cliente que encapsula toda la informaciï¿½n del cliente
 	 * @param indicadorAct --
 	 * @param dsnTienda --
-	 * @param envioPixel Arreglo con toda la información del detalle del pedido
+	 * @param envioPixel Arreglo con toda la informaciï¿½n del detalle del pedido
 	 * @param idformapagotienda el identificador de la forma de pago parametrizada por el cliente
 	 * @param idTienda identificador de la tienda en el sistema POS
-	 * @param usuario usuario que está tomando el pedido
+	 * @param usuario usuario que estï¿½ tomando el pedido
 	 * @param tiempoPedido El tiempo dado al pedido
 	 * @return
 	 */
@@ -583,7 +619,7 @@ public class PedidoCtrl implements Runnable {
 			resPedPixel = new RespuestaPedidoPixel(false, 0, 0, 0, 0);
 			return(resPedPixel);
 		}
-		//Validaremos si el sistema está aperturado en la tienda
+		//Validaremos si el sistema estï¿½ aperturado en la tienda
 		capaControladorPOS.PedidoCtrl pedCtrl = new capaControladorPOS.PedidoCtrl(false);
 		boolean estaAperturadaTienda = pedCtrl.isSistemaAperturado();
 		if(!estaAperturadaTienda)
@@ -591,7 +627,7 @@ public class PedidoCtrl implements Runnable {
 			resPedPixel = new RespuestaPedidoPixel(false, -1, 0, 0, 0);
 			return(resPedPixel);
 		}
-		//Iremos a separar la lógica de lo nuevo y de lo pasado
+		//Iremos a separar la lï¿½gica de lo nuevo y de lo pasado
 		capaControladorPOS.ParametrosProductoCtrl parProductoCtrl = new capaControladorPOS.ParametrosProductoCtrl(false);
 		capaControladorPOS.ParametrosCtrl parCtrl = new capaControladorPOS.ParametrosCtrl(false);
 		//Obtenemos la fecha del sistema
@@ -615,6 +651,10 @@ public class PedidoCtrl implements Runnable {
 		float latitud = cliente.getLatitud();
 		float longitud = cliente.getLontitud();
 		double distanciaTienda = cliente.getDistanciaTienda();
+		String emailFacturacion = cliente.getEmailFacturacion();
+		String clienteSinIden = cliente.getClienteSinIden();
+		int idTipoPersona = cliente.getIdTipoPersona();
+		String identificacion = cliente.getIdentificacion();
 		if(observacion.length() > 200)
 		{
 			observacion = observacion.substring(0, 200);
@@ -622,11 +662,11 @@ public class PedidoCtrl implements Runnable {
 		String tienda = cliente.getTienda();
 		int idMunicipio = cliente.getIdMunicipio();
 		int idNomemclatura = cliente.getIdnomenclatura();
-		//conformamos el campo dirección con base en la nomenclatura definida
+		//conformamos el campo direcciï¿½n con base en la nomenclatura definida
 		String direccion = cliente.getDireccion();
 		//Creamos el objeto cliente de la capa controladara
 		ClienteCtrl clienteCtrl = new ClienteCtrl(PrincipalLogueo.habilitaAuditoria);
-		//Antes de realizar la actualización o modificación del cliente vamos a revisar su estado del memcode
+		//Antes de realizar la actualizaciï¿½n o modificaciï¿½n del cliente vamos a revisar su estado del memcode
 		if(cliente.getMemcode() > 0)
 		{
 			//Creamos un cliente de la capaModeloPOS
@@ -637,12 +677,16 @@ public class PedidoCtrl implements Runnable {
 			}
 				
 		}
-		//Creamos el objeto cliente con todos los parámetros
+		//Creamos el objeto cliente con todos los parï¿½metros
 		if(cliente.getMemcode() == 0)
 		{
-			//Realizamos la creación del cliente capturando todos los valores enviados como parámetros
+			//Realizamos la creaciï¿½n del cliente capturando todos los valores enviados como parï¿½metros
 			capaModeloPOS.Cliente crearCliente = new capaModeloPOS.Cliente(0, telefono, nombre, apellido, compania, direccion, "", idMunicipio,latitud, longitud, zona , observacion, tienda, idTienda, 0, idNomemclatura, numNomen1, numNomen2, num3, "", distanciaTienda, cliente.getTelefonoCelular(), cliente.getEmail(), cliente.getPoliticaDatos());
-			//Realizamos la inserción del cliente
+			crearCliente.setEmai_factura(emailFacturacion);
+			crearCliente.setFactura_sin(clienteSinIden);
+			crearCliente.setIdtipopersona(idTipoPersona);
+			crearCliente.setIdentificacion(identificacion);
+			//Realizamos la inserciï¿½n del cliente
 			int idCliIns = clienteCtrl.insertarCliente(crearCliente);
 			//llevamos a la variable idClienteTienda el id del cliente insertado
 			idClienteTienda = idCliIns;
@@ -651,11 +695,15 @@ public class PedidoCtrl implements Runnable {
 			
 		}else
 		{
-			//Creamos objeto para la actualización del cliente
+			//Creamos objeto para la actualizaciï¿½n del cliente
 			capaModeloPOS.Cliente actualizaCliente = new capaModeloPOS.Cliente(cliente.getMemcode(), telefono, nombre, apellido, compania, direccion, "", idMunicipio,latitud, longitud, zona , observacion, tienda, idTienda, 0, idNomemclatura, numNomen1, numNomen2, num3, "", distanciaTienda, cliente.getTelefonoCelular(), cliente.getEmail(), cliente.getPoliticaDatos());
-			//Obtenemos el idClienteTienda del valor que ya viene en los parámetros dado que ya este existe.
+			actualizaCliente.setEmai_factura(emailFacturacion);
+			actualizaCliente.setFactura_sin(clienteSinIden);
+			actualizaCliente.setIdtipopersona(idTipoPersona);
+			actualizaCliente.setIdentificacion(identificacion);
+			//Obtenemos el idClienteTienda del valor que ya viene en los parï¿½metros dado que ya este existe.
 			idClienteTienda = cliente.getMemcode();
-			//Realizamos la actualización del cliente si viene al caso
+			//Realizamos la actualizaciï¿½n del cliente si viene al caso
 			clienteCtrl.actualizarClienteNoFisico(actualizaCliente);
 		}
 		
@@ -730,21 +778,21 @@ public class PedidoCtrl implements Runnable {
 			origenPedido = "CONTACT-CENTER";
 		}
 			
-		//Realizamos la inserción del encabezado pedido
+		//Realizamos la inserciï¿½n del encabezado pedido
 		idPedidoTienda = pedCtrl.InsertarEncabezadoPedido(idTienda, idClienteTienda, fechaPedido, usuario, origenPedido, programado, horaProgramado, idPedidoAlt);
 		
-		//Iniciamos la inserción de los detalles pedidos
+		//Iniciamos la inserciï¿½n de los detalles pedidos
 		double cantidad;
 		int idProducto;
 		double precio;
 		boolean esMaster = false;
-		// Esta variable hace alusión a como viene el idDetalleMaster del sistema de contact center que obviamente será
-		//diferente al número que queda en el sistema tienda
+		// Esta variable hace alusiï¿½n a como viene el idDetalleMaster del sistema de contact center que obviamente serï¿½
+		//diferente al nï¿½mero que queda en el sistema tienda
 		int idDetalleMaster = 0;
-		// Esta variabla hace alusión al idDetallePedido que ya le queda al idDetalleMaster luego de la inserción
+		// Esta variabla hace alusiï¿½n al idDetallePedido que ya le queda al idDetalleMaster luego de la inserciï¿½n
 		// en el sistema de tienda.
 		int idDetalleMasterDef = 0;
-		// La siguiente variable hace alusión a la idDetalleMaestro en el detalle hijo
+		// La siguiente variable hace alusiï¿½n a la idDetalleMaestro en el detalle hijo
 		int idDetalleHijoMaster = 0;
 		capaControladorPOS.ParametrosProductoCtrl parPro = new ParametrosProductoCtrl(true);
 		int contadorDetallePedido = 0;
@@ -756,7 +804,7 @@ public class PedidoCtrl implements Runnable {
 		int idProductoPrincipal = 0;
 		int idProductoEleccion = 0;
 		String strPrecio = "";
-		//Antes de iniciar la inserción del detalle del pedido revisamos si hay que insertar el mágnetico
+		//Antes de iniciar la inserciï¿½n del detalle del pedido revisamos si hay que insertar el mï¿½gnetico
 		if(creaCliente)
 		{
 			detPedido = new DetallePedido(0,idPedidoTienda, idTienda, 245,1, 0, 0, "",0, "N","", contadorDetallePedido);
@@ -773,7 +821,7 @@ public class PedidoCtrl implements Runnable {
 			cantidad = cadaDetallePedido.getCantidad();
 			// Aqui no podemos obtener el precio de una manera loca, pues no sabemos cual es la pregunta forzada
 			precio = parPro.obtenerPrecioPilaProducto(idProducto);
-			//Validamos si el precio devuelto es -1 es porque el precio deberá ser el que viene en la integracion
+			//Validamos si el precio devuelto es -1 es porque el precio deberï¿½ ser el que viene en la integracion
 			if(precio == -1 )
 			{
 				precio = cadaDetallePedido.getValor();
@@ -788,7 +836,7 @@ public class PedidoCtrl implements Runnable {
 				detPedido = new DetallePedido(0,idPedidoTienda, idTienda, idProducto,cantidad, precio, cantidad*precio, "",0, "N","", contadorDetallePedido);
 				//Tomamos el idDetalleMaster para insertarlo en los futuros hijos
 				idDetalleMasterDef = pedCtrl.insertarDetallePedido(detPedido);
-				//Guardamos el y el idDetalle generado en la inserción
+				//Guardamos el y el idDetalle generado en la inserciï¿½n
 				cadaDetallePedido.setIdDetallePedIns(idDetalleMasterDef);
 			}else if(idProducto != 2002)
 			{
@@ -821,10 +869,10 @@ public class PedidoCtrl implements Runnable {
 						detPedido = new DetallePedido(0,idPedidoTienda, idTienda ,idProducto,cantidad, precio, cantidad*precio, "",idDetalleMasterDef, "N","", contadorDetallePedido);
 						int idDetalle = pedCtrl.insertarDetallePedido(detPedido);
 						cadaDetallePedido.setIdDetallePedIns(idDetalle);
-					}else //Sino se cumple esta condición es porque es un modificador por lo tanto hay que devolverse a ver el modificador
+					}else //Sino se cumple esta condiciï¿½n es porque es un modificador por lo tanto hay que devolverse a ver el modificador
 					{
 						//Tenemos qeu devolvernos en el arreglo para saber cual es el padre del modificador es decir
-						//el modificador a quien está relacionado
+						//el modificador a quien estï¿½ relacionado
 						int idDetalleModificadorPadre = 0;
 						for(int j = i-1; j >= 0; j--)
 						{
@@ -847,7 +895,7 @@ public class PedidoCtrl implements Runnable {
 			}
 			contadorDetallePedido++;
 		}
-		//Definimos la variable que tendrá el tipo de pedido a insertar
+		//Definimos la variable que tendrï¿½ el tipo de pedido a insertar
 		int idTipoPedido = 0;
 		//Si la variable desde el contact center viene sin valor definimos que es un domicilio
 		if(idTipoPed == 0)
@@ -860,7 +908,7 @@ public class PedidoCtrl implements Runnable {
 		
 		
 		//Insertamos la forma pago
-		//NOS TOCA AFINAR LOS PARÁMETROS PARA INSERTAR CORRECTAMENTE LA FORMA DE PAGO
+		//NOS TOCA AFINAR LOS PARï¿½METROS PARA INSERTAR CORRECTAMENTE LA FORMA DE PAGO
 		//Recuperamos la forma de pago del pedido
 		capaModeloPOS.FormaPago forPago = parCtrl.retornarFormaPago(idformapagotienda);
 		if(forPago.getTipoforma().equals("EFECTIVO"))
@@ -889,7 +937,7 @@ public class PedidoCtrl implements Runnable {
 			boolean resFormaPago = pedCtrl.insertarPedidoFormaPago(	0, 0, 0, 0, 0,0,0,valorformapago, valortotal, (valorformapago - valortotal), idPedidoTienda);
 		}
 		//System.out.println("descuento " + descuento + " idPedidoTienda " + idPedidoTienda);
-		//Revisamos si dentro de la información proveniente del contact center hay descuento
+		//Revisamos si dentro de la informaciï¿½n proveniente del contact center hay descuento
 		if(descuento > 0)
 		{
 			if(reintegro == null)
@@ -911,19 +959,19 @@ public class PedidoCtrl implements Runnable {
 				
 			//Creamos el objeto de descuento para luego ser ingresado en la base de datos
 			PedidoDescuento descPedido = new PedidoDescuento(idPedidoTienda, descuento, 0, motivoDescuento , "",0,0, "CONTACT-CENTER", "CONTACT-CENTER", bReintegro );
-			//Realizamos la inserción del descuento en base de datos
+			//Realizamos la inserciï¿½n del descuento en base de datos
 			boolean resp = pedCtrl.insertarPedidoDescuento(descPedido);
 		}
 		
 		//Finalizamos el pedido
-		//System.out.println("PARÁMETROS PARA FINALIZAR " + idPedidoTienda + " " + tiempoPedido + " " + idTipoPedido);
+		//System.out.println("PARï¿½METROS PARA FINALIZAR " + idPedidoTienda + " " + tiempoPedido + " " + idTipoPedido);
 		boolean resFinPedido = pedCtrl.finalizarPedido(idPedidoTienda, tiempoPedido, idTipoPedido,1, new ArrayList<DetallePedido>(),false, false, false, false,0,programado, horaProgramado,"",0,"","");
 		
 
 		if(idPedidoTienda != 0)
 		{
 			resPedPixel = new RespuestaPedidoPixel(creaCliente, idPedidoTienda, idClienteTienda ,idpedido,cliente.getIdcliente());
-			//Una vez realizamos la inserción del pedido, insertamos el pedido en la tabla para control de duplicado
+			//Una vez realizamos la inserciï¿½n del pedido, insertamos el pedido en la tabla para control de duplicado
 			PedidoPOSPMDAO.insertarPedidoContactExiste(idpedido, idPedidoTienda);
 		}else
 		{
@@ -1026,7 +1074,7 @@ public class PedidoCtrl implements Runnable {
 		ArrayList<TiempoPedido> tiemposPedidos = new ArrayList();
 		//Obtenemos el arreglo con todos los estados
 		ArrayList hisEstadosPedidos = EstadoDAO.obtenerHistoriaEstadoPedidosFecha(fecha);
-		//el ciclo tendrá vida mientras existe estados de historia de pedido a procesar
+		//el ciclo tendrï¿½ vida mientras existe estados de historia de pedido a procesar
 		ArrayList hisEstPedido;
 		int idPedidoActual = 0;
 		boolean indicador = true;
@@ -1037,7 +1085,7 @@ public class PedidoCtrl implements Runnable {
 			//Debemos de extraer la historia pedido de cada uno particular
 			//Instanciamos el temporal para extraer la historia de cada pedido particular
 			hisEstPedido = new ArrayList();
-			//Extraemos el idPedido que vamos a tratar para esta iteración
+			//Extraemos el idPedido que vamos a tratar para esta iteraciï¿½n
 			String[] filaHistoria = (String[])hisEstadosPedidos.get(0);
 			idPedidoActual = Integer.parseInt(filaHistoria[filaHistoria.length - 2]);
 			hisEstPedido.add(filaHistoria);
@@ -1057,7 +1105,7 @@ public class PedidoCtrl implements Runnable {
 					indicador = false;
 				}
 			}
-			//En este punto ya podemos realizar validación si el estado es final o no y de acuerdo a esto tomar ciertas
+			//En este punto ya podemos realizar validaciï¿½n si el estado es final o no y de acuerdo a esto tomar ciertas
 			//determinaciones.
 			int cantHist  = hisEstPedido.size();
 			boolean esEstadoFinal = false;
@@ -1162,8 +1210,8 @@ public class PedidoCtrl implements Runnable {
 		return(tiemposPedidos);
 	}
 	
-	//Realizamos desarrollo en capa controlador de lo que atenderá la necesidad de consulta de pedidos 
-	//Sobre este método agregaremos un nuevo campo qeu es comentario sobre el cual se tendrá en cuenta si el pedido tiene o no comentarios
+	//Realizamos desarrollo en capa controlador de lo que atenderï¿½ la necesidad de consulta de pedidos 
+	//Sobre este mï¿½todo agregaremos un nuevo campo qeu es comentario sobre el cual se tendrï¿½ en cuenta si el pedido tiene o no comentarios
 	//sobre otro productos que sea necesario llevar.
 	public String consultarPedidosDomiciliario(String idUsuario, int tipoConsulta)
 	{
@@ -1198,7 +1246,7 @@ public class PedidoCtrl implements Runnable {
 	}
 	
 	
-	//Método que se encargará de dar llegada a los domiciliarios desde el sistema TABLET
+	//Mï¿½todo que se encargarï¿½ de dar llegada a los domiciliarios desde el sistema TABLET
 	public String darLlegadaDomicilios(String idUsuario, String usuario)
 	{
 		//Se traen el listado de pedidos 
@@ -1253,8 +1301,8 @@ public class PedidoCtrl implements Runnable {
 	
 	
 	/**
-	 * Método que tendrá como objetivo avanzar de estado un pedido que fue marcado como entregado por un domiciliario
-	 * desde la app de logística
+	 * Mï¿½todo que tendrï¿½ como objetivo avanzar de estado un pedido que fue marcado como entregado por un domiciliario
+	 * desde la app de logï¿½stica
 	 * @param idPedidoTienda
 	 * @return
 	 */
@@ -1295,10 +1343,10 @@ public class PedidoCtrl implements Runnable {
 	}
 	
 	
-	//Método que se encargará de dar llegada a los domiciliarios desde el sistema TABLET
+	//Mï¿½todo que se encargarï¿½ de dar llegada a los domiciliarios desde el sistema TABLET
 		public String darSalidaDomicilios(String idUsuario, String usuario, String JSONidPedido)
 		{
-			//Creamos el JSONArray con el JSON que se recibe como parámetro
+			//Creamos el JSONArray con el JSON que se recibe como parï¿½metro
 			JSONArray JSONPedidos = new JSONArray();
 			try
 			{
@@ -1307,7 +1355,7 @@ public class PedidoCtrl implements Runnable {
 				JSONPedidos = (JSONArray) objParser;
 			}catch(Exception e)
 			{
-				System.out.println("Error parseando el JSON recibido por aplicación Tablet " + e.toString());
+				System.out.println("Error parseando el JSON recibido por aplicaciï¿½n Tablet " + e.toString());
 			}
 			//Se traen el listado de pedidos 
 			ArrayList pedidos = new ArrayList();
@@ -1345,14 +1393,14 @@ public class PedidoCtrl implements Runnable {
 			{
 				JSONObject pedido =(JSONObject) JSONPedidos.get(i);
 				int idPedido = Integer.parseInt((String)pedido.get("idpedido"));
-				//Realizamos la salida del domicilio en específico
+				//Realizamos la salida del domicilio en especï¿½fico
 				pedidoCtrlTienda.ActualizarEstadoPedido((int)idPedido, (int) estEmpDom , (int) estEnRutaDom,usuario,true, Integer.parseInt(idUsuario), "",true);
 			}
 			//Luego de avanzar todos los pedidos damos la entrada al domiciliario
 			capaControladorPOS.EmpleadoCtrl empCtrl = new capaControladorPOS.EmpleadoCtrl(false);
 			empCtrl.salidaDomiciliario(Integer.parseInt(idUsuario));
 			
-			//Realizamos la creación del hilo para realizar la notificacion del despacho
+			//Realizamos la creaciï¿½n del hilo para realizar la notificacion del despacho
 //			hiloDespachos = new Thread(this);
 //			JSONPedidosNoti = JSONPedidos;
 //			hiloDespachos.start();
@@ -1364,7 +1412,7 @@ public class PedidoCtrl implements Runnable {
 		
 		
 		/**
-		 * Método para dar entregado un pedido desde las plataformas de domicilios
+		 * Mï¿½todo para dar entregado un pedido desde las plataformas de domicilios
 		 * @param idUsuario
 		 * @param usuario
 		 * @param idPedido
@@ -1400,17 +1448,17 @@ public class PedidoCtrl implements Runnable {
 				valNum = 0;
 			}
 			estEnRutaDom = valNum;		
-			//Realizamos la actualización del pedido
+			//Realizamos la actualizaciï¿½n del pedido
 			pedidoCtrlTienda.ActualizarEstadoPedidoPlataforma((int)idPedido, (int) estEmpDom , (int) estEnRutaDom,usuario,true, Integer.parseInt(idUsuario), "",true);
 			JSONObject resultado = new JSONObject();
 			resultado.put("resultado", "exitoso");
 			return(resultado.toString());
 		}
 		
-		//Método que se encargará de devolver de estado domicilios que un domiciliario pudo seleccionar por error
+		//Mï¿½todo que se encargarï¿½ de devolver de estado domicilios que un domiciliario pudo seleccionar por error
 		public String devolverEstadoDomicilio(String idUsuario, String usuario, String JSONidPedido)
 		{
-			//Creamos el JSONArray con el JSON que se recibe como parámetro con el o los pedidos en formato JSON
+			//Creamos el JSONArray con el JSON que se recibe como parï¿½metro con el o los pedidos en formato JSON
 			JSONArray JSONPedidos = new JSONArray();
 			try
 			{
@@ -1419,7 +1467,7 @@ public class PedidoCtrl implements Runnable {
 				JSONPedidos = (JSONArray) objParser;
 			}catch(Exception e)
 			{
-				System.out.println("Error parseando el JSON recibido por aplicación Tablet " + e.toString());
+				System.out.println("Error parseando el JSON recibido por aplicaciï¿½n Tablet " + e.toString());
 			}
 			//Se traen el listado de pedidos 
 			ArrayList pedidos = new ArrayList();
@@ -1458,7 +1506,7 @@ public class PedidoCtrl implements Runnable {
 			{
 				JSONObject pedido =(JSONObject) JSONPedidos.get(i);
 				int idPedido = Integer.parseInt((String)pedido.get("idpedido"));
-				//Realizamos la salida del domicilio en específico
+				//Realizamos la salida del domicilio en especï¿½fico
 				pedidoCtrlTienda.ActualizarEstadoPedido((int)idPedido,(int) estEnRutaDom, (int) estEmpDom ,usuario,true, Integer.parseInt(idUsuario), "",true);
 				pedidoCtrlTienda.desasignarDomiciliarioPedido((int)idPedido);
 				
