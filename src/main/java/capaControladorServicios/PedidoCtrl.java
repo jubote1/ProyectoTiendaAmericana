@@ -42,6 +42,7 @@ import capaModeloPOS.InfoEstadoPedido;
 import capaModeloPOS.Municipio;
 import capaModeloPOS.NomenclaturaDireccion;
 import capaModeloPOS.Parametro;
+import capaModeloPOS.Pedido;
 import capaModeloPOS.PedidoDescuento;
 import capaModeloPOS.TiempoPedido;
 import interfazGraficaPOS.PrincipalLogueo;
@@ -71,7 +72,7 @@ public class PedidoCtrl implements Runnable {
 				//Una vez se tiene el cliente tomamos la l�gica para enviar el el correo y el mensaje de texto
 				PromocionesCtrl promoCtrl = new PromocionesCtrl(false);
 				//Procesamos los mensajes de texto y correo electr�nico
-				String mensajeTexto = "Pizza Americana te informa que el domiciliario ya est� en ruta para entregarte tu pedido # " + idPedido + ". Disfrutala!"; 
+				String mensajeTexto = "Pizza Americana te informa que el domiciliario ya esta en ruta para entregarte tu pedido # " + idPedido + ". Disfrutala!"; 
 				String telefonoCelular = clientePed.getTelefonoCelular();
 				
 				//Env�o del mensaje de Texto siempre y cuando se acepte la pol�tica de manejo de datos
@@ -965,7 +966,7 @@ public class PedidoCtrl implements Runnable {
 		
 		//Finalizamos el pedido
 		//System.out.println("PAR�METROS PARA FINALIZAR " + idPedidoTienda + " " + tiempoPedido + " " + idTipoPedido);
-		boolean resFinPedido = pedCtrl.finalizarPedido(idPedidoTienda, tiempoPedido, idTipoPedido,1, new ArrayList<DetallePedido>(),false, false, false, false,0,programado, horaProgramado,"",0,"","");
+		boolean resFinPedido = pedCtrl.finalizarPedido(idPedidoTienda, tiempoPedido, idTipoPedido,1, new ArrayList<DetallePedido>(),false, false, false, false,0,programado, horaProgramado,"",0,"","",0);
 		
 
 		if(idPedidoTienda != 0)
@@ -1537,6 +1538,15 @@ public class PedidoCtrl implements Runnable {
 			resultado.put("estadopedido", infoEstado.getEstadoPedido());
 			resultado.put("fechadesde", infoEstado.getFechaDesde());
 			return(resultado.toString());
+		}
+		
+		public String ActualizarInfoFacElectronica(int idPedidoTienda, int idTipoCliente, String identificacion, String nombreClienteFact, String correoFact)
+		{
+			String respuesta = "";
+			Pedido pedido = PedidoDAO.obtenerPedido(idPedidoTienda, false);
+			//Posteriormente con el idcliente realizamos la actualicación de la información del cliente	
+			ClienteDAO.actualizarInformacionFacturacion(pedido.getIdcliente(), idTipoCliente, identificacion, nombreClienteFact, correoFact);
+			return(respuesta);
 		}
 
 }
