@@ -1318,14 +1318,14 @@ public class PedidoCtrl implements Runnable {
 		return(respuesta);
 	}
 	
-	public String cambiarFormaPagoPedidoApp(int idPedidoTienda,int idTienda, String claveUsuario, String observacion)
+	public String cambiarFormaPagoPedidoApp(int idPedidoTienda,int idTienda, String claveUsuario, String observacion, int idFormaPago)
 	{
 		capaControladorPOS.PedidoCtrl pedidoCtrlTienda = new capaControladorPOS.PedidoCtrl(false);
 		if(observacion.length()> 100)
 		{
 			observacion = observacion.substring(0,99);
 		}
-		String respuesta = pedidoCtrlTienda.cambiarFormaPagoPedidoApp(idPedidoTienda, idTienda, claveUsuario, observacion);
+		String respuesta = pedidoCtrlTienda.cambiarFormaPagoPedidoApp(idPedidoTienda, idTienda, claveUsuario, observacion,idFormaPago);
 		return(respuesta);
 	}
 	

@@ -19,8 +19,8 @@ import capaModeloWeb.UsuarioAnt;
 
 /**
  * Servlet implementation class ValidarUsuarioAplicacion
- * Servicio que es invocado siempre que es cargada una p�gina con el fin de validar si quien accede esta logueado en el sistema
- * en caso negativo se redirecciona a la URL de logueo a la aplicaci�.
+ * Servicio que es invocado siempre que es cargada una p�gina con el fin de validar si quien accede esta logueado en el sistema
+ * en caso negativo se redirecciona a la URL de logueo a la aplicaci�.
  */
 @WebServlet("/CambiarFormaPagoPedidoApp")
 public class CambiarFormaPagoPedidoApp extends HttpServlet {
@@ -36,76 +36,50 @@ public class CambiarFormaPagoPedidoApp extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 * Este servicio retorna el atributo de tipo usuario y con base en este valida si el usuario si est� logueado.Se 
-	 * retornan tres posibles valores NOK si la validaci�n del usuario no es correcta, OKA si es un usuario administrador
+	 * Este servicio retorna el atributo de tipo usuario y con base en este valida si el usuario si est� logueado.Se 
+	 * retornan tres posibles valores NOK si la validaci�n del usuario no es correcta, OKA si es un usuario administrador
 	 * y OK si es un usuario normal
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-				response.addHeader("Access-Control-Allow-Origin", "*");
-				Logger logger = Logger.getLogger("log_file");
-				String idPedidoTiendaStr = "";
-				String claveUsuario = "";
-				int idPedidoTienda = 0;
-				String idTiendaStr = "";
-				String observacion = "";
-				int idTienda = 0;
-				try
-				{
-					idPedidoTiendaStr = request.getParameter("idpedidotienda");
-				}catch(Exception e)
-				{
-					System.out.println("Error casteando el usuario");
-					idPedidoTiendaStr = "1";
-				}
-				try
-				{
-					claveUsuario = request.getParameter("claveusuario");
-				}catch(Exception e)
-				{
-					System.out.println("Error casteando clave usuario");
-					claveUsuario = "";
-				}
-				try
-				{
-					idTiendaStr = request.getParameter("idtienda");
-				}catch(Exception e)
-				{
-					System.out.println("Error casteando el usuario");
-					idTiendaStr = "1";
-				}
-				idPedidoTienda = Integer.parseInt(idPedidoTiendaStr);
-				idTienda = Integer.parseInt(idTiendaStr);
-				String respuesta = "";
-				try
-				{
-					observacion = request.getParameter("observacion");
-				}catch(Exception e)
-				{
-					System.out.println("Error casteando clave usuario");
-					observacion = "";
-				}
-				if(observacion == null)
-				{
-					observacion = "";
-				}
-				observacion = URLDecoder.decode(observacion, StandardCharsets.UTF_8.toString());
-				//Tipo consulta busca diferenciar el tipo de consulta 1 es para domiciliario disponible y 2 para domiciliario en ruta
-				//Al no existir el usuario logueado es posible que produza una excepcion
-				try
-				{
-					//Debemos de validar la existencia del usuario
-					PedidoCtrl pedCtrl = new PedidoCtrl();
-					respuesta = pedCtrl.cambiarFormaPagoPedidoApp(idPedidoTienda, idTienda, claveUsuario,observacion);
-					respuesta = respuesta + observacion;
-				}catch(Exception e)
-				{
-					logger.error(e.toString());
-					
-				}
-		        PrintWriter out = response.getWriter();
-		        out.write(respuesta);
-	}
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        Logger logger = Logger.getLogger("log_file");
+
+        String respuesta = "";
+
+        try {
+            // Obtener parámetros con método seguro
+            String idPedidoTiendaStr = getParam(request, "idpedidotienda", "0");
+            String claveUsuario      = getParam(request, "claveusuario", "");
+            String idTiendaStr       = getParam(request, "idtienda", "0");
+            String observacion       = getParam(request, "observacion", "");
+            String idFormaPagoStr    = getParam(request, "idformapago", "0");
+
+            // Decodificar observación
+            observacion = URLDecoder.decode(observacion, StandardCharsets.UTF_8.toString());
+
+            // Convertir parámetros numéricos
+            int idPedidoTienda = parseIntSafe(idPedidoTiendaStr);
+            int idTienda       = parseIntSafe(idTiendaStr);
+            int idFormaPago    = parseIntSafe(idFormaPagoStr);
+
+            // Ejecutar lógica de negocio
+            PedidoCtrl pedCtrl = new PedidoCtrl();
+            respuesta = pedCtrl.cambiarFormaPagoPedidoApp(idPedidoTienda, idTienda, claveUsuario, observacion, idFormaPago);
+
+            // Si quieres concatenar observación (como lo hacías)
+            respuesta += observacion;
+
+        } catch (Exception e) {
+            logger.error("Error en doGet cambiar forma de pago: " + e);
+            respuesta = "error";
+        }
+
+        // Respuesta al cliente
+        PrintWriter out = response.getWriter();
+        out.write(respuesta);
+    }
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
@@ -114,5 +88,19 @@ public class CambiarFormaPagoPedidoApp extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
+	
+	private String getParam(HttpServletRequest req, String name, String defecto) {
+	    String val = req.getParameter(name);
+	    return val != null ? val : defecto;
+	}
+
+	private int parseIntSafe(String val) {
+	    try {
+	        return Integer.parseInt(val);
+	    } catch (Exception e) {
+	        return 0;
+	    }
+	}
+
 
 }
