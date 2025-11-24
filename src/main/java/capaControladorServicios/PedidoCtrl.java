@@ -1325,6 +1325,7 @@ public class PedidoCtrl implements Runnable {
 		{
 			observacion = observacion.substring(0,99);
 		}
+		
 		String respuesta = pedidoCtrlTienda.cambiarFormaPagoPedidoApp(idPedidoTienda, idTienda, claveUsuario, observacion,idFormaPago);
 		return(respuesta);
 	}
