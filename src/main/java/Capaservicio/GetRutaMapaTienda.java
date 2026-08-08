@@ -14,8 +14,8 @@ import capaControladorPOS.OperacionesTiendaCtrl;
 
 /**
  * Servlet implementation class GetTiendas
- * Servicio que se encarga de retornar las tiendas o puntos de venta para los cuales se podrá tomar un pedido, 
- * la información será retornada en formato JSON.
+ * Servicio que se encarga de retornar las tiendas o puntos de venta para los cuales se podrï¿½ tomar un pedido, 
+ * la informaciï¿½n serï¿½ retornada en formato JSON.
  */
 @WebServlet("/GetRutaMapaTienda")
 public class GetRutaMapaTienda extends HttpServlet {
@@ -31,14 +31,15 @@ public class GetRutaMapaTienda extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 * Este servicio no recibe parámetros dado que no filtra la información, simplemente retorna en formato JSON 
-	 * las tiendas o puntos de venta parametrizados en el sistema, invocando el método obtenerTiendas de la capa Tienda Controlador.
+	 * Este servicio no recibe parï¿½metros dado que no filtra la informaciï¿½n, simplemente retorna en formato JSON 
+	 * las tiendas o puntos de venta parametrizados en el sistema, invocando el mï¿½todo obtenerTiendas de la capa Tienda Controlador.
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try{
 			response.addHeader("Access-Control-Allow-Origin", "*");
-			response.setContentType("application/json");
+			request.setCharacterEncoding("UTF-8");
+			response.setContentType("application/json;charset=UTF-8");
 			OperacionesTiendaCtrl operTienda = new OperacionesTiendaCtrl(false);
 			String respuesta = operTienda.obtenerRutaMapa();
 			PrintWriter out = response.getWriter();

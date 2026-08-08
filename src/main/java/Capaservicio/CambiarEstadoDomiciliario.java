@@ -17,8 +17,8 @@ import capaModeloWeb.UsuarioAnt;
 
 /**
  * Servlet implementation class ValidarUsuarioAplicacion
- * Servicio que es invocado siempre que es cargada una página con el fin de validar si quien accede esta logueado en el sistema
- * en caso negativo se redirecciona a la URL de logueo a la aplicació.
+ * Servicio que es invocado siempre que es cargada una pï¿½gina con el fin de validar si quien accede esta logueado en el sistema
+ * en caso negativo se redirecciona a la URL de logueo a la aplicaciï¿½.
  */
 @WebServlet("/CambiarEstadoDomiciliario")
 public class CambiarEstadoDomiciliario extends HttpServlet {
@@ -34,13 +34,15 @@ public class CambiarEstadoDomiciliario extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 * Este servicio retorna el atributo de tipo usuario y con base en este valida si el usuario si está logueado.Se 
-	 * retornan tres posibles valores NOK si la validación del usuario no es correcta, OKA si es un usuario administrador
+	 * Este servicio retorna el atributo de tipo usuario y con base en este valida si el usuario si estï¿½ logueado.Se 
+	 * retornan tres posibles valores NOK si la validaciï¿½n del usuario no es correcta, OKA si es un usuario administrador
 	 * y OK si es un usuario normal
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 				response.addHeader("Access-Control-Allow-Origin", "*");
+				response.setContentType("application/json;charset=UTF-8");
+				request.setCharacterEncoding("UTF-8");
 				Logger logger = Logger.getLogger("log_file");
 				String idUsuario = "";
 				try

@@ -187,6 +187,8 @@ public class PedidoCtrl implements Runnable {
 		     //Plataforma de pedidos
 		     String plataforma = "";
 		     String idPedidoAlt = "";
+		     String domicilioTercerizado = "";
+		     String empresaTercerizada = "";
 			  // Realizamos el parseo inicial de la informaci�n que se le env�a al servicio
 			 Long tempidpedido = new Long((long)jsonPedido.get("idpedido"));
 			 idpedido =  (new Integer(tempidpedido.intValue()));
@@ -304,7 +306,20 @@ public class PedidoCtrl implements Runnable {
 			 {
 				 idPedidoAlt = "";
 			 }
-			 
+			 try
+			 {
+				 domicilioTercerizado  = (String)jsonPedido.get("domiciliotercerizado");
+			 }catch(Exception e)
+			 {
+				 domicilioTercerizado = "N";
+			 }
+			 try
+			 {
+				 empresaTercerizada  = (String)jsonPedido.get("empresatercerizada");
+			 }catch(Exception e)
+			 {
+				 empresaTercerizada = "";
+			 }
 			 
 			 //Realizamos el casteo controlado de las variables para la creaci�n del cliente
 			 int idMunicipio;
@@ -492,7 +507,7 @@ public class PedidoCtrl implements Runnable {
 			 }else
 			 {
 				 //Para esta situaci�n estaremos en el sistema POS Pizza Americana
-				 respuesta = confirmarPedidoPOSPMTienda(idpedido,valorformapago, valortotal, cliente,indicadorAct, dsnTienda, detPedidoPixel,idformapagotienda, tienda.getIdTienda(), usuario, tiempoPedido, descuento, motivoDescuento, reintegro, origen, programado, horaProgramado, idTipoPedido, plataforma, idPedidoAlt);
+				 respuesta = confirmarPedidoPOSPMTienda(idpedido,valorformapago, valortotal, cliente,indicadorAct, dsnTienda, detPedidoPixel,idformapagotienda, tienda.getIdTienda(), usuario, tiempoPedido, descuento, motivoDescuento, reintegro, origen, programado, horaProgramado, idTipoPedido, plataforma, idPedidoAlt, domicilioTercerizado, empresaTercerizada);
 			 }
 			  JSONObject cadaResJSON = new JSONObject();
 			 cadaResJSON.put("creacliente", respuesta.getClienteCreado());
@@ -608,7 +623,7 @@ public class PedidoCtrl implements Runnable {
 	 * @param tiempoPedido El tiempo dado al pedido
 	 * @return
 	 */
-	public static RespuestaPedidoPixel confirmarPedidoPOSPMTienda(int idpedido,double valorformapago, double valortotal, Cliente cliente, boolean indicadorAct, String dsnTienda, ArrayList<DetallePedidoPixel> envioPixel, int idformapagotienda, int idTienda , String usuario, int tiempoPedido, double descuento, String motivoDescuento, String reintegro, String origen, String programado, String horaProgramado, int idTipoPed, String plataforma, String idPedidoAlt)
+	public static RespuestaPedidoPixel confirmarPedidoPOSPMTienda(int idpedido,double valorformapago, double valortotal, Cliente cliente, boolean indicadorAct, String dsnTienda, ArrayList<DetallePedidoPixel> envioPixel, int idformapagotienda, int idTienda , String usuario, int tiempoPedido, double descuento, String motivoDescuento, String reintegro, String origen, String programado, String horaProgramado, int idTipoPed, String plataforma, String idPedidoAlt, String domicilioTercerizado, String empresaTercerizada)
 	{
 		// Se define la variable a retornar
 		int idPedidoTienda = 0;
@@ -780,7 +795,7 @@ public class PedidoCtrl implements Runnable {
 		}
 			
 		//Realizamos la inserci�n del encabezado pedido
-		idPedidoTienda = pedCtrl.InsertarEncabezadoPedido(idTienda, idClienteTienda, fechaPedido, usuario, origenPedido, programado, horaProgramado, idPedidoAlt);
+		idPedidoTienda = pedCtrl.InsertarEncabezadoPedido(idTienda, idClienteTienda, fechaPedido, usuario, origenPedido, programado, horaProgramado, idPedidoAlt, domicilioTercerizado, empresaTercerizada );
 		
 		//Iniciamos la inserci�n de los detalles pedidos
 		double cantidad;

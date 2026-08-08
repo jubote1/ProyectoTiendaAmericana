@@ -31,14 +31,15 @@ public class CRUDTiempoPedido extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 * Se recibirá como parámetro principal el idoperacion con base en los siguientes valores 
-	 *  idoperacion 1 insertar 2 editar 3 Eliminar  4 Consultar, de acuerdo a la id operacion se pedirán los otros parámetros y se invocará el método en la capa controlador.
+	 * Se recibirï¿½ como parï¿½metro principal el idoperacion con base en los siguientes valores 
+	 *  idoperacion 1 insertar 2 editar 3 Eliminar  4 Consultar, de acuerdo a la id operacion se pedirï¿½n los otros parï¿½metros y se invocarï¿½ el mï¿½todo en la capa controlador.
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//Operación idoperacion 1 actualizar 2 consultar
-		response.addHeader("Access-Control-Allow-Origin", "*");		
+		//Operaciï¿½n idoperacion 1 actualizar 2 consultar
+		response.addHeader("Access-Control-Allow-Origin", "*");	
+		response.setContentType("application/json;charset=UTF-8");
 		HttpSession sesion = request.getSession();
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		request.setCharacterEncoding("UTF-8");
 		UsuarioAnt usuario = (UsuarioAnt) sesion.getAttribute("usuario");
 		String user = "" ;
 		//Al no existir el usuario logueado es posible que produza una excepcion

@@ -42,6 +42,8 @@ public class ObtenerPedidoPrioridadV2 extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 				response.addHeader("Access-Control-Allow-Origin", "*");
+				response.setContentType("application/json;charset=UTF-8");
+				request.setCharacterEncoding("UTF-8");
 				Logger logger = Logger.getLogger("log_file");
 				String respuesta = "";
 				try

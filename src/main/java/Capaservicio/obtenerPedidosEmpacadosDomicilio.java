@@ -34,7 +34,9 @@ public class obtenerPedidosEmpacadosDomicilio extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.addHeader("Access-Control-Allow-Origin", "*");
+		response.setContentType("application/json;charset=UTF-8");
 		HttpSession sesion = request.getSession();
+		request.setCharacterEncoding("UTF-8");
 		PedidoCtrl pedidoCtrl = new PedidoCtrl();
 		String respuesta = pedidoCtrl.obtenerPedidosEmpacadosDomicilio();
 		PrintWriter out = response.getWriter();
