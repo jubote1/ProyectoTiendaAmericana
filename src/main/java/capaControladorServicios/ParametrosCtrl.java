@@ -52,7 +52,7 @@ public class ParametrosCtrl {
 				ArrayList correos = GeneralDAO.obtenerCorreosParametro("TIEMPOPEDIDO");
 				correo.setContrasena("Pizzaamericana2017");
 				correo.setUsuarioCorreo("alertaspizzaamericana@gmail.com");
-				correo.setMensaje("La tienda " + tienda.getNombretienda() + " está aumentando el tiempo de entrega a " + nuevotiempo + " minutos");
+				correo.setMensaje("La tienda " + tienda.getNombretienda() + " estï¿½ aumentando el tiempo de entrega a " + nuevotiempo + " minutos");
 				ControladorEnvioCorreo contro = new ControladorEnvioCorreo(correo, correos);
 				contro.enviarCorreo();
 			}
@@ -116,5 +116,24 @@ public class ParametrosCtrl {
 		return(respJSON.toString());
 	}
 	
+	
+	public static int obtenerParametroNumerico(String nombre, int valorDefecto) {
+	    Parametro parametro = ParametrosDAO.obtenerParametroBDPrincipal(nombre);
 
+	    if (parametro.getValorNumerico() > 0) {
+	        return parametro.getValorNumerico();
+	    }
+
+	    return valorDefecto;
+	}
+
+	public static String obtenerParametroTexto(String nombre, String valorDefecto) {
+	    Parametro parametro = ParametrosDAO.obtenerParametroBDPrincipal(nombre);
+
+	    if (parametro.getValorTexto() != null && !parametro.getValorTexto().trim().isEmpty()) {
+	        return parametro.getValorTexto().trim();
+	    }
+
+	    return valorDefecto;
+	}
 }

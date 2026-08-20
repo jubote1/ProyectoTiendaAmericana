@@ -1,6 +1,7 @@
 package capaDAOPixelpos;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -50,6 +51,43 @@ public class ParametrosDAO {
 			}
 		}
 		return(valor);
+	}
+	
+	public static Parametro obtenerParametroBDPrincipal(String valorParametro) {
+	    Logger logger = Logger.getLogger("log_file");
+	    Parametro parametro = new Parametro(valorParametro, 0, "");
+
+	    String sql =
+	        "SELECT valornumerico, valortexto " +
+	        "FROM parametros " +
+	        "WHERE valorparametro = ? " +
+	        "LIMIT 1";
+
+	    ConexionBaseDatos con = new ConexionBaseDatos();
+
+	    try (Connection con1 = con.obtenerConexionBDPrincipal();
+	         PreparedStatement ps = con1.prepareStatement(sql)) {
+
+	        ps.setString(1, valorParametro);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                int valorNumerico = rs.getInt("valornumerico");
+	                String valorTexto = rs.getString("valortexto");
+
+	                parametro = new Parametro(
+	                        valorParametro,
+	                        valorNumerico,
+	                        valorTexto != null ? valorTexto : ""
+	                );
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        logger.info(e.toString());
+	    }
+
+	    return parametro;
 	}
 	
 	public static String retornarValorAlfanumerico(String variable)

@@ -1,9 +1,12 @@
 package capaDAOPixelpos;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -11,6 +14,7 @@ import capaConexion.ConexionBaseDatos;
 import capaModeloWeb.Cliente;
 import capaModeloWeb.DetallePedidoPixel;
 import capaModeloWeb.EstadoPedidoTienda;
+import capaModeloWeb.PedidoCandidatoRappiCargo;
 import capaModeloWeb.RespuestaPedidoPixel;
 import capaModeloWeb.Tienda;
 public class PedidoPixelDAO {
@@ -20,14 +24,14 @@ public class PedidoPixelDAO {
 	{
 		// Se define la variable a retornar
 		int numFactura = 0;
-		// Se instancia el objeto de la clase que nos servirá para la inserción del pedido
+		// Se instancia el objeto de la clase que nos servirï¿½ para la inserciï¿½n del pedido
 		Main principal = new Main();
 				
 		//Si memcode = 0 es porque hay que crear el cliente
 		//Si memcode <> 0 y indicador igual a true hay que actualizar
 		//Si memcode <> 0 y indicador igual a false hay que actualizar
 		int memcodeAnt = cliente.getMemcode();
-		// Se invoca el método para la inserción del pedido y se retornará el número de la factura
+		// Se invoca el mï¿½todo para la inserciï¿½n del pedido y se retornarï¿½ el nï¿½mero de la factura
 		numFactura = principal.main(envioPixel, dsnTienda,cliente.getMemcode(),cliente, indicadorAct, valorformapago, idpedido, idformapagotienda);
 		boolean creaCliente = false;
 		RespuestaPedidoPixel resPedPixel;
@@ -49,9 +53,9 @@ public class PedidoPixelDAO {
 	
 	
 	/**
-	 * Método en la capa de acceso a datos que se encarga de lanzar la consulta para conocer los estados de los pedidos de una
-	 * tienda en el día en curso, retorma la información de estos pedidos en un ArrayList con objetos de tipo EstadoPedidoTienda
-	 * @param dsnODBC Se recibe como parámetro el string con dsn para la conexión a la tienda.
+	 * Mï¿½todo en la capa de acceso a datos que se encarga de lanzar la consulta para conocer los estados de los pedidos de una
+	 * tienda en el dï¿½a en curso, retorma la informaciï¿½n de estos pedidos en un ArrayList con objetos de tipo EstadoPedidoTienda
+	 * @param dsnODBC Se recibe como parï¿½metro el string con dsn para la conexiï¿½n a la tienda.
 	 * @return Se retorna un arrayList con objetos tipo EstadoPedidoTienda.
 	 */
 	public static ArrayList<EstadoPedidoTienda> ConsultarEstadoPedidoTienda(String dsnODBC)
@@ -127,6 +131,7 @@ public class PedidoPixelDAO {
 	}
 	
 	
+
 	
 
 }
