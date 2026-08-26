@@ -329,4 +329,37 @@ public class RecogidaTercerizadaDAO {
             return ps.executeUpdate() == 1;
         }
     }
+    
+    
+    /**
+     * Reversa de marcarPedidoComoTercerizado.
+     *
+     * Siempre limpia la marca de tercerizado (domicilio_tercerizado = 'N').
+     *
+     * El idestado solo se ajusta si el pedido está "En Ruta" (7), en cuyo
+     * caso vuelve a "En Espera" (5) para que lo tome un domiciliario propio.
+     * Si está en cocina (2, 3) o ya "Entregado" (8), el estado no se toca.
+     */
+    public boolean desmarcarPedidoComoTercerizado(long idPedidoTienda, int idTienda) throws SQLException {
+
+        String sql =
+            "UPDATE pedido " +
+            "SET domicilio_tercerizado = 'N', " +
+            "    idestado = CASE WHEN idestado = 7 THEN 5 ELSE idestado END " +
+            "WHERE idpedidotienda = ? " +
+            "AND idtienda = ? " +
+            "AND domicilio_tercerizado = 'S' " +
+            "AND idmotivoanulacion IS NULL";
+
+        ConexionBaseDatos con = new ConexionBaseDatos();
+
+        try (Connection conn = con.obtenerConexionBDLocal();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, idPedidoTienda);
+            ps.setInt(2, idTienda);
+
+            return ps.executeUpdate() == 1;
+        }
+    }
 }
