@@ -1358,6 +1358,14 @@ public class PedidoCtrl implements Runnable {
 		String respuesta = pedidoCtrlTienda.obtenerResumenDomiciliarioAppV2(idTienda, claveUsuario);
 		return(respuesta);
 	}
+
+	public String consultarConteoPedidosDomiciliario(int idTienda, String claveUsuario)
+	{
+		capaControladorPOS.PedidoCtrl pedidoCtrlTienda = new capaControladorPOS.PedidoCtrl(false);
+		String respuesta = pedidoCtrlTienda.consultarConteoPedidosDomiciliario(idTienda, claveUsuario);
+		return(respuesta);
+	}
+
 	
 	
 	//M�todo que se encargar� de dar llegada a los domiciliarios desde el sistema TABLET
