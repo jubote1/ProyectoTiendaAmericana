@@ -1361,9 +1361,44 @@ public class PedidoCtrl implements Runnable {
 
 	public String consultarConteoPedidosDomiciliario(int idTienda, String claveUsuario)
 	{
-		capaControladorPOS.PedidoCtrl pedidoCtrlTienda = new capaControladorPOS.PedidoCtrl(false);
-		String respuesta = pedidoCtrlTienda.consultarConteoPedidosDomiciliario(idTienda, claveUsuario);
-		return(respuesta);
+		JSONObject resultado = new JSONObject();
+		try {
+			capaModeloPOS.Usuario usuarioDomicilio = capaDAOPOS.UsuarioDAO.validarAutenticacionRapida(claveUsuario, "", false);
+			if (usuarioDomicilio == null || usuarioDomicilio.getIdUsuario() == 0) {
+				resultado.put("resultado", "error");
+				resultado.put("mensaje", "Usuario no encontrado");
+				return resultado.toJSONString();
+			}
+			capaModeloPOS.FechaSistema fecha = capaDAOPOS.TiendaDAO.obtenerFechasSistema(false);
+			String fechaActual = (fecha != null && fecha.getFechaApertura() != null) ? fecha.getFechaApertura() : "";
+
+			// Si la tienda esta cerrada (fecha 1904-03-01 o vacia)
+			if (fechaActual.startsWith("19") || fechaActual.isEmpty()) {
+				String fechaHoy = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+				resultado.put("resultado", "ok");
+				resultado.put("entregados", 0);
+				resultado.put("pendientes", 0);
+				resultado.put("fecha", fechaHoy);
+				resultado.put("nombre", usuarioDomicilio.getNombreLargo());
+				return resultado.toJSONString();
+			}
+
+			int idDom = usuarioDomicilio.getIdUsuario();
+
+			int entregados = PedidoDAO.obtenerPedidosEntregados(fechaActual, fechaActual, idDom);
+			ArrayList pedidosEnRuta = PedidoDAO.obtenerPedidosVentanaComandaDomEnRuta(fechaActual, 0, idDom, false);
+			int pendientes = (pedidosEnRuta != null) ? pedidosEnRuta.size() : 0;
+
+			resultado.put("resultado", "ok");
+			resultado.put("entregados", entregados);
+			resultado.put("pendientes", pendientes);
+			resultado.put("fecha", fechaActual);
+			resultado.put("nombre", usuarioDomicilio.getNombreLargo());
+		} catch (Exception e) {
+			resultado.put("resultado", "error");
+			resultado.put("mensaje", e.getMessage());
+		}
+		return resultado.toJSONString();
 	}
 
 	
