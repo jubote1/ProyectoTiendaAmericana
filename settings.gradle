@@ -1,1 +1,45 @@
-includeFlat 'ProyectoTiendaAmericanaCliente'
+rootProject.name = 'ProyectoTiendaAmericana'
+
+/*
+ * ProyectoTiendaAmericana se compila contra el CODIGO FUENTE de
+ * ProyectoTiendaAmericanaCliente (el POS), no contra un jar.
+ *
+ * Antes tomaba libs/PizzaAmericanaCliente.jar, una copia congelada del POS: cada
+ * vez que el POS ganaba un metodo que este proyecto necesitaba, el jar seguia
+ * sin el y la compilacion fallaba con "cannot find symbol" (paso con
+ * consultarConteoPedidosDomiciliario). Con el proyecto referenciado, lo que se
+ * compila es siempre lo que hay en el POS.
+ *
+ * La ruta NO se escribe aqui: cada quien tiene los repositorios en carpetas
+ * distintas y este archivo se comparte por git. Se declara UNA vez por maquina
+ * en el archivo personal de Gradle, que nunca se sube:
+ *
+ *     Windows: C:\Users\<usuario>\.gradle\gradle.properties
+ *
+ *     rutaTiendaAmericanaCliente=C:/Users/ASUS/git/ProyectoTiendaAmericanaCliente
+ *
+ * (barras normales / incluso en Windows). Es la misma propiedad que usa el
+ * proyecto Servicios. Si no esta declarada se busca como hermano de esta carpeta
+ * (../ProyectoTiendaAmericanaCliente) y solo si tampoco esta se falla.
+ *
+ * Nota: no usar barras invertidas dentro de cadenas Groovy en este archivo.
+ */
+
+def candidatas = []
+if (settings.hasProperty('rutaTiendaAmericanaCliente')) {
+    candidatas << new File(settings.getProperty('rutaTiendaAmericanaCliente').toString().trim())
+}
+candidatas << new File(settingsDir, '../ProyectoTiendaAmericanaCliente')
+
+// Se identifica el proyecto por su build.gradle. Si projectDir apunta a una carpeta
+// que no existe, Gradle crea en silencio un proyecto vacio y el error sale despues
+// como "None of the consumable configurations have attributes", que no dice nada.
+def dirCliente = candidatas.find { new File(it, 'build.gradle').isFile() }
+if (dirCliente == null) {
+    throw new GradleException('No se pudo ubicar el codigo de ProyectoTiendaAmericanaCliente. Se busco en: '
+            + candidatas.collect { it.absolutePath }.join(' | ')
+            + ' -- declare rutaTiendaAmericanaCliente en su gradle.properties personal, ver el comentario al inicio de settings.gradle')
+}
+include ':ProyectoTiendaAmericanaCliente'
+project(':ProyectoTiendaAmericanaCliente').projectDir = dirCliente
+println 'ProyectoTiendaAmericana referencia ProyectoTiendaAmericanaCliente -> ' + dirCliente.canonicalPath

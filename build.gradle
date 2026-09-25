@@ -32,7 +32,9 @@ dependencies {
    // https://mvnrepository.com/artifact/commons-logging/commons-logging
    implementation group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
    
+
    // Dependencias de librerias externas
+
    implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.19'
    
@@ -42,6 +44,13 @@ dependencies {
    // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0' 
 
+}
+
+// ArcGIS y JavaFX llegan arrastrados por el POS pero este servicio web no usa ninguno
+// (0 imports): sin excluirlos el .war cargaria cientos de MB de mas.
+configurations.runtimeClasspath {
+    exclude group: 'com.esri.arcgisruntime'
+    exclude group: 'org.openjfx'
 }
 
 dependencies {
