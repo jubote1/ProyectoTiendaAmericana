@@ -32,7 +32,10 @@ dependencies {
    // https://mvnrepository.com/artifact/commons-logging/commons-logging
    implementation group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
    
-   implementation fileTree(dir: 'libs', include: '*.jar')
+   // El POS se toma como PROYECTO (codigo fuente), ya no como libs/PizzaAmericanaCliente.jar:
+   // ese jar era una copia congelada y en cuanto el POS ganaba un metodo nuevo esto dejaba
+   // de compilar. La ruta del POS sale del gradle.properties personal, ver settings.gradle.
+   implementation project(':ProyectoTiendaAmericanaCliente')
    implementation fileTree(dir: 'libs', include: '*.json')
    
    // https://mvnrepository.com/artifact/javax.mail/mail
@@ -47,6 +50,13 @@ dependencies {
    // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0' 
 
+}
+
+// ArcGIS y JavaFX llegan arrastrados por el POS pero este servicio web no usa ninguno
+// (0 imports): sin excluirlos el .war cargaria cientos de MB de mas.
+configurations.runtimeClasspath {
+    exclude group: 'com.esri.arcgisruntime'
+    exclude group: 'org.openjfx'
 }
 
 dependencies {
