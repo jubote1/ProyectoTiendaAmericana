@@ -326,11 +326,123 @@ public class RecogidaTercerizadaDAO {
             ps.setLong(1, idPedidoTienda);
             ps.setInt(2, idTienda);
 
-            return ps.executeUpdate() == 1;
+            boolean marcado = ps.executeUpdate() == 1;
+
+            if (marcado) {
+                sacarDelEnrutamiento(conn, idPedidoTienda);
+            }
+
+            return marcado;
         }
     }
-    
-    
+
+    /**
+     * Si el pedido estaba enrutado a un domiciliario, lo saca de esa ruta.
+     *
+     * POR QUE
+     *
+     * Un domicilio que toma Cargo no lo lleva un domiciliario nuestro. Cuando
+     * Cargo lo toma DESPUES de que la tienda ya lo enruto, el pedido se quedaba
+     * marcado SUGERIDO para alguien que nunca iba a llevarlo: le ocupaba un
+     * puesto en la ruta, lo bloqueaba para los demas y al final expiraba sin
+     * que quedara dicho por que.
+     *
+     * Medido del 1 al 31 de octubre de 2026 en las once tiendas, siete pedidos
+     * enrutados terminaron en Cargo. El peor caso fue en San Antonio: quedo
+     * dentro de una ruta ya ACEPTADA, o sea que el domiciliario salio creyendo
+     * que lo llevaba.
+     *
+     * NO QUEDA COMO LIBERADO
+     *
+     * LIBERADO significa que el domiciliario lo solto, y el informe lo cuenta
+     * como rechazo. Aqui el no decidio nada: se lo quitaron.
+     *
+     * El POS hace esta misma barrida cada vez que alguien mira el enrutamiento,
+     * por si esta llamada no alcanzo a correr. Esta es la que lo hace en el
+     * momento; aquella es la red de seguridad.
+     *
+     * No propaga la excepcion a proposito: si esto falla, el pedido YA quedo
+     * marcado como tercerizado, que es lo principal, y la barrida del POS lo
+     * recoge. Tumbar la marca por no poder limpiar la ruta seria peor.
+     */
+    private void sacarDelEnrutamiento(Connection conn, long idPedidoTienda) {
+
+        String seleccion =
+            "SELECT d.pedido_sugerencia_id " +
+            "FROM pedido_sugerencia_det d " +
+            "JOIN pedido_sugerencia c ON c.id = d.pedido_sugerencia_id " +
+            "WHERE d.id_pedido = ? " +
+            "AND d.estado_det = 'SUGERIDO' " +
+            "AND c.estado IN ('PENDIENTE','ASIGNADA','VISTA','ACEPTADA')";
+
+        try {
+            List<Integer> sugerencias = new ArrayList<Integer>();
+
+            try (PreparedStatement ps = conn.prepareStatement(seleccion)) {
+                ps.setLong(1, idPedidoTienda);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        sugerencias.add(Integer.valueOf(rs.getInt(1)));
+                    }
+                }
+            }
+
+            if (sugerencias.isEmpty()) {
+                return;
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE pedido_sugerencia_det SET estado_det = 'TERCERIZADO' " +
+                    "WHERE id_pedido = ? AND estado_det = 'SUGERIDO'")) {
+                ps.setLong(1, idPedidoTienda);
+                ps.executeUpdate();
+            }
+
+            for (Integer idSugerencia : sugerencias) {
+
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO pedido_sugerencia_log " +
+                        "(pedido_sugerencia_id, id_pedido, accion, id_usuario_actua, motivo, creado_en) " +
+                        "VALUES (?, ?, 'TERCERIZADO', NULL, ?, NOW())")) {
+                    ps.setInt(1, idSugerencia.intValue());
+                    ps.setLong(2, idPedidoTienda);
+                    ps.setString(3, "El domicilio lo tomo un tercero");
+                    ps.executeUpdate();
+                }
+
+                //Una ruta que se quedo sin un solo pedido vivo se cierra. Solo se
+                //tocan las que siguen abiertas: una ACEPTADA ya esta resuelta y no
+                //se puede devolver a LIBERADA.
+                int quedan = 0;
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "SELECT COUNT(*) FROM pedido_sugerencia_det " +
+                        "WHERE pedido_sugerencia_id = ? AND estado_det = 'SUGERIDO'")) {
+                    ps.setInt(1, idSugerencia.intValue());
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            quedan = rs.getInt(1);
+                        }
+                    }
+                }
+
+                if (quedan > 0) {
+                    continue;
+                }
+
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE pedido_sugerencia SET estado = 'LIBERADA', resuelto_en = NOW() " +
+                        "WHERE id = ? AND estado IN ('PENDIENTE','ASIGNADA','VISTA')")) {
+                    ps.setInt(1, idSugerencia.intValue());
+                    ps.executeUpdate();
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("sacarDelEnrutamiento " + idPedidoTienda + ": " + e.toString());
+        }
+    }
+
+
     /**
      * Reversa de marcarPedidoComoTercerizado.
      *
